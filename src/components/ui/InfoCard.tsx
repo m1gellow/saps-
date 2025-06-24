@@ -14,33 +14,65 @@ export const InfoCard = ({ size = 'normal', title, img, description }: InfoCardP
     <div
       className={cn(
         'relative bg-skyblue rounded-xl overflow-hidden',
-        'flex flex-col md:flex-row',
-        size === 'small' ? 'min-h-[260px] md:h-[260px]' : 'min-h-[400px] md:h-[560px]',
+        'flex flex-col',
+        size === 'small' ? 'min-h-[260px]' : 'min-h-[400px]',
+        'md:flex-row md:h-full'
       )}
     >
       {/* Текстовый контент */}
-      <div className="relative z-10 p-5 md:p-8 flex flex-col justify-between h-full md:w-1/2">
+      <div className={cn(
+        "relative z-10 p-5 md:p-8 flex flex-col justify-between",
+        "md:w-1/2",
+        size === 'small' ? "md:min-h-[260px]" : "md:min-h-[560px]"
+      )}>
         <div>
-          <h1 className="font-bold text-blue text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-3 md:mb-4">{title}</h1>
-          {description && <p className="font-medium text-gray-800 text-base sm:text-lg md:text-xl">{description}</p>}
+          <h1 className="font-bold text-blue text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-3 md:mb-4">
+            {title}
+          </h1>
+          {description && (
+            <p className="font-medium text-gray-800 text-base sm:text-lg md:text-xl">
+              {description}
+            </p>
+          )}
         </div>
       </div>
 
       {/* Изображение */}
-      <div className={cn('relative h-full min-h-[200px] md:min-h-0', 'md:w-1/2', 'flex items-center justify-center')}>
+      <div className={cn(
+        "relative",
+        "flex-1", // Занимает оставшееся пространство
+        "min-h-[200px] md:min-h-0",
+        "overflow-hidden"
+      )}>
         {img && (
-          <img
-            src={img}
-            alt="Sup"
-            className={cn(
-              'absolute h-full w-full object-cover',
-              'transform scale-[0.8] md:scale-[0.7] lg:scale-[0.8]',
-              'md:object-left lg:object-center',
-              size === 'small' && 'md:scale-[0.6] lg:scale-[0.6]',
-            )}
-          />
+          <>
+            {/* Мобильное изображение (обрезанное) */}
+            <img
+              src={img}
+              alt={title}
+              className={cn(
+                "w-full h-full object-cover md:hidden",
+                "min-h-[200px]"
+              )}
+            />
+            
+            {/* Десктопное изображение (полноразмерное) */}
+            <img
+              src={img}
+              alt={title}
+              className={cn(
+                "hidden md:block absolute inset-0 w-full h-full object-cover",
+                "transition-transform duration-300 hover:scale-105",
+                size === 'small' ? "object-left" : "object-center"
+              )}
+            />
+          </>
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/30 to-transparent md:bg-gradient-to-r md:from-white/50 md:to-transparent" />
+        <div className={cn(
+          "absolute inset-0",
+          "bg-gradient-to-t from-white/30 to-transparent",
+          "md:bg-gradient-to-r md:from-white/50 md:to-transparent"
+        )} />
       </div>
     </div>
   );

@@ -10,8 +10,8 @@ export const NavSection = (): JSX.Element => {
       <div className="bg-skyblue border-[2px]   border-blue rounded-t-[8px]">
         <div className="container flex md:justify-center justify-between items-center gap-[42.5px]">
           <div className="flex items-center gap-[40px]">
-            <Link to="/" className="flex items-center  ">
-              <img alt="Logo" src={'../../../public/Logo.png'} className="w-[60px] h-[80px]" />
+            <Link to="/" className="flex items-center">
+              <img alt="Logo" src={'/Logo.png'} className="max-w-[60px] max-h-[80px]" />
             </Link>
 
             <div>
