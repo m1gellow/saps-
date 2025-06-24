@@ -1,11 +1,11 @@
-import React from "react";
-import { useFavorites } from "../../lib/context/FavoritesContext";
-import { useCart } from "../../lib/context/CartContext";
-import { Button } from "../ui/button";
-import { motion, AnimatePresence } from "framer-motion";
-import { Heart, X, ShoppingCart } from "lucide-react";
-import { Link } from "react-router-dom";
-import clsx from "clsx";
+import React from 'react';
+import { useFavorites } from '../../lib/context/FavoritesContext';
+import { useCart } from '../../lib/context/CartContext';
+import { Button } from '../ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Heart, X, ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import clsx from 'clsx';
 
 interface FavoritesDropdownProps {
   isOpen: boolean;
@@ -13,11 +13,7 @@ interface FavoritesDropdownProps {
   className?: string;
 }
 
-export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({ 
-  isOpen, 
-  onClose,
-  className
-}) => {
+export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({ isOpen, onClose, className }) => {
   const { favorites, removeFromFavorites, totalFavorites } = useFavorites();
   const { addToCart } = useCart();
 
@@ -29,10 +25,10 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
   if (!isOpen) return null;
 
   return (
-    <motion.div 
+    <motion.div
       className={clsx(
-        "w-[320px] sm:w-[350px] bg-white shadow-lg rounded-lg z-50 max-h-[80vh] overflow-auto",
-        className
+        'w-[320px] sm:w-[350px] bg-white shadow-lg rounded-lg z-50 max-h-[80vh] overflow-auto',
+        className,
       )}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -43,13 +39,13 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
       <div className="p-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">Избранное ({totalFavorites})</h2>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={(e) => {
               e.stopPropagation();
               onClose();
-            }} 
+            }}
             className="hover:bg-gray-100 rounded-full h-8 w-8 p-0"
           >
             <X className="h-5 w-5" />
@@ -67,8 +63,8 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
           <div className="max-h-[400px] overflow-y-auto">
             <AnimatePresence mode="wait">
               {favorites.map((product) => (
-                <motion.div 
-                  key={product.id} 
+                <motion.div
+                  key={product.id}
                   className="flex items-center justify-between p-4 border-b border-gray-200"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -77,11 +73,7 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
                 >
                   <div className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-gray-50 rounded-md flex items-center justify-center p-1">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-contain"
-                      />
+                      <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
                     </div>
                     <div>
                       <h3 className="font-normal text-[#333333] text-base">
@@ -91,30 +83,23 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
                       <p className="text-gray-1 font-semibold">{formatPrice(product.price)}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col space-y-2">
-                    <motion.div 
-                      whileHover={{ scale: 1.05 }} 
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Button 
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button
                         className="w-[100px] h-[30px] bg-blue-4 hover:bg-teal-600 rounded-[53px] text-white text-xs flex items-center gap-1"
                         onClick={(e) => {
                           e.stopPropagation();
                           addToCart(product);
                         }}
                       >
-                        <ShoppingCart className="w-3 h-3" />
-                        В корзину
+                        <ShoppingCart className="w-3 h-3" />В корзину
                       </Button>
                     </motion.div>
-                    <motion.div 
-                      whileHover={{ scale: 1.05 }} 
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         className="text-red-500 text-xs w-full hover:bg-red-50"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -132,10 +117,7 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
 
           <div className="p-4 border-t border-gray-200">
             <Link to="/favorites" className="w-full">
-              <Button 
-                className="w-full bg-blue-4 hover:bg-teal-600 rounded-[53px] text-white"
-                onClick={onClose}
-              >
+              <Button className="w-full bg-blue-4 hover:bg-teal-600 rounded-[53px] text-white" onClick={onClose}>
                 Перейти в избранное
               </Button>
             </Link>

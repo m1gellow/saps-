@@ -1,10 +1,4 @@
-type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Product = {
   id: number;
@@ -39,19 +33,9 @@ export type FilterState = {
 
 export type PriceRange = [number, number];
 
-type OrderStatus = 
-  | 'Ожидает оплаты'
-  | 'Оплачен'
-  | 'Доставляется'
-  | 'Завершен'
-  | 'Отменен';
+type OrderStatus = 'Ожидает оплаты' | 'Оплачен' | 'Доставляется' | 'Завершен' | 'Отменен';
 
-type PaymentMethod = 
-  | 'Карта' 
-  | 'СБП' 
-  | 'Наличными при получении'
-  | 'Ожидает оплаты'
-  | 'Отменен';
+type PaymentMethod = 'Карта' | 'СБП' | 'Наличными при получении' | 'Ожидает оплаты' | 'Отменен';
 
 type OrderItem = {
   id: number;

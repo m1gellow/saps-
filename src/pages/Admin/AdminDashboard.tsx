@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  ShoppingBag, 
-  Users, 
-  TrendingUp, 
-  CreditCard, 
-  AlertCircle, 
-  Package, 
-  ArrowUp, 
+import {
+  ShoppingBag,
+  Users,
+  TrendingUp,
+  CreditCard,
+  AlertCircle,
+  Package,
+  ArrowUp,
   ArrowDown,
-  Loader2 
+  Loader2,
 } from 'lucide-react';
 import { getAdminDashboardStats } from '../../lib/api/admin';
 
@@ -21,7 +21,7 @@ export const AdminDashboard = () => {
     revenueToday: 0,
     visitors: 3456, // В реальном приложении это можно получать из аналитики
     lowStockItems: [] as any[],
-    recentOrders: [] as any[]
+    recentOrders: [] as any[],
   });
 
   // Загрузка статистики при монтировании компонента
@@ -29,20 +29,20 @@ export const AdminDashboard = () => {
     const fetchStats = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const result = await getAdminDashboardStats();
-        
+
         if (result.error) {
           throw result.error;
         }
-        
+
         setStats({
           newOrdersToday: result.newOrdersToday,
           revenueToday: result.revenueToday,
           visitors: 3456, // Заглушка
           lowStockItems: result.lowStockItems || [],
-          recentOrders: result.recentOrders || []
+          recentOrders: result.recentOrders || [],
         });
       } catch (err) {
         console.error('Ошибка при загрузке статистики:', err);
@@ -51,39 +51,39 @@ export const AdminDashboard = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchStats();
   }, []);
 
   // Данные статистики для отображения
   const statsCards = [
-    { 
-      title: 'Новые заказы', 
-      value: stats.newOrdersToday.toString(), 
-      icon: <ShoppingBag size={24} />, 
-      change: '+17%', 
-      isUp: true 
+    {
+      title: 'Новые заказы',
+      value: stats.newOrdersToday.toString(),
+      icon: <ShoppingBag size={24} />,
+      change: '+17%',
+      isUp: true,
     },
-    { 
-      title: 'Выручка сегодня', 
-      value: `${stats.revenueToday.toLocaleString()} ₽`, 
-      icon: <CreditCard size={24} />, 
-      change: '+24%', 
-      isUp: true 
+    {
+      title: 'Выручка сегодня',
+      value: `${stats.revenueToday.toLocaleString()} ₽`,
+      icon: <CreditCard size={24} />,
+      change: '+24%',
+      isUp: true,
     },
-    { 
-      title: 'Посетители', 
-      value: stats.visitors.toString(), 
-      icon: <Users size={24} />, 
-      change: '-12%', 
-      isUp: false 
+    {
+      title: 'Посетители',
+      value: stats.visitors.toString(),
+      icon: <Users size={24} />,
+      change: '-12%',
+      isUp: false,
     },
-    { 
-      title: 'Товаров на складе', 
-      value: (stats.lowStockItems.length > 0 ? (234 - stats.lowStockItems.length) : 234).toString(), 
-      icon: <Package size={24} />, 
-      change: '+4%', 
-      isUp: true 
+    {
+      title: 'Товаров на складе',
+      value: (stats.lowStockItems.length > 0 ? 234 - stats.lowStockItems.length : 234).toString(),
+      icon: <Package size={24} />,
+      change: '+4%',
+      isUp: true,
     },
   ];
 
@@ -106,7 +106,7 @@ export const AdminDashboard = () => {
   return (
     <div className="space-y-8">
       <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Панель управления</h1>
-      
+
       {/* Статистические карточки */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {statsCards.map((stat, index) => (
@@ -123,9 +123,7 @@ export const AdminDashboard = () => {
                 <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
               </div>
               <div className={`p-3 rounded-full ${index % 2 === 0 ? 'bg-blue-4 bg-opacity-10' : 'bg-gray-100'}`}>
-                <div className={index % 2 === 0 ? 'text-blue-4' : 'text-gray-700'}>
-                  {stat.icon}
-                </div>
+                <div className={index % 2 === 0 ? 'text-blue-4' : 'text-gray-700'}>{stat.icon}</div>
               </div>
             </div>
             <div className="mt-4 flex items-center">
@@ -170,29 +168,23 @@ export const AdminDashboard = () => {
                 {stats.recentOrders.length > 0 ? (
                   stats.recentOrders.map((order, index) => (
                     <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-4">
-                        {order.id}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                        {order.customer}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {order.date}
-                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-4">{order.id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{order.customer}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.date}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium
                           ${order.status === 'Оплачен' ? 'bg-green-100 text-green-800' : ''}
                           ${order.status === 'Ожидает оплаты' ? 'bg-yellow-100 text-yellow-800' : ''}
                           ${order.status === 'Доставляется' ? 'bg-blue-100 text-blue-800' : ''}
                           ${order.status === 'Завершен' ? 'bg-gray-100 text-gray-800' : ''}
                           ${order.status === 'Отменен' ? 'bg-red-100 text-red-800' : ''}
-                        `}>
+                        `}
+                        >
                           {order.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                        {order.amount}
-                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{order.amount}</td>
                     </tr>
                   ))
                 ) : (
@@ -206,9 +198,7 @@ export const AdminDashboard = () => {
             </table>
           </div>
           <div className="p-4 border-t border-gray-100 text-center">
-            <button className="text-sm text-blue-4 hover:text-blue-600 font-medium">
-              Посмотреть все заказы
-            </button>
+            <button className="text-sm text-blue-4 hover:text-blue-600 font-medium">Посмотреть все заказы</button>
           </div>
         </motion.div>
 
@@ -230,9 +220,7 @@ export const AdminDashboard = () => {
                     <p className="text-sm font-medium text-gray-800">{item.name}</p>
                     <div className="flex items-center">
                       <AlertCircle size={16} className="text-amber-500 mr-1" />
-                      <p className="text-xs text-amber-600">
-                        Товар закончился
-                      </p>
+                      <p className="text-xs text-amber-600">Товар закончился</p>
                     </div>
                   </div>
                   <button className="text-xs bg-blue-4 text-white px-3 py-1 rounded-full hover:bg-blue-600 transition-colors">
@@ -241,15 +229,11 @@ export const AdminDashboard = () => {
                 </div>
               ))
             ) : (
-              <div className="text-center text-gray-500 py-4">
-                Все товары в достаточном количестве
-              </div>
+              <div className="text-center text-gray-500 py-4">Все товары в достаточном количестве</div>
             )}
           </div>
           <div className="p-4 border-t border-gray-100 text-center">
-            <button className="text-sm text-blue-4 hover:text-blue-600 font-medium">
-              Управление складом
-            </button>
+            <button className="text-sm text-blue-4 hover:text-blue-600 font-medium">Управление складом</button>
           </div>
         </motion.div>
       </div>
@@ -265,11 +249,13 @@ export const AdminDashboard = () => {
           <h2 className="text-lg font-semibold text-gray-800">Аналитика продаж</h2>
           <div className="flex space-x-2">
             <button className="px-3 py-1 text-sm bg-blue-4 text-white rounded-md">За неделю</button>
-            <button className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200">За месяц</button>
+            <button className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200">
+              За месяц
+            </button>
             <button className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200">За год</button>
           </div>
         </div>
-        
+
         <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg border border-dashed border-gray-300">
           <div className="text-center text-gray-500">
             <TrendingUp className="h-10 w-10 mx-auto mb-3 text-gray-400" />

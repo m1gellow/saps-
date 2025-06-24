@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { supabase } from "../supabase";
-import { useAuth } from "./AuthContext";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../supabase';
+import { useAuth } from './AuthContext';
 
 interface UserProfile {
   name: string;
@@ -14,7 +14,7 @@ interface ProfileContextType {
   profile: UserProfile | null;
   isAuthenticated: boolean;
   login: (credentials: { email: string; password: string }) => Promise<boolean>;
-  signup: (data: { name: string, email: string, password: string }) => Promise<boolean>;
+  signup: (data: { name: string; email: string; password: string }) => Promise<boolean>;
   logout: () => void;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
   showProfileModal: boolean;
@@ -45,11 +45,11 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     try {
       setIsLoading(true);
       const { data, error } = await getUserProfile();
-      
+
       if (error) {
         throw error;
       }
-      
+
       // Проверяем, что data существует и не null
       if (data) {
         setProfile({
@@ -70,14 +70,14 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
           avatar: undefined,
         });
         setIsAuthenticated(true);
-        
+
         // Можно автоматически создать профиль для пользователя
         if (user) {
           try {
             await supabase.from('user_profiles').insert({
               id: user.id,
               email: user.email,
-              name: user.user_metadata?.name || ''
+              name: user.user_metadata?.name || '',
             });
           } catch (createError) {
             console.error('Ошибка при создании профиля:', createError);
@@ -96,12 +96,12 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     try {
       setIsLoading(true);
       const { error } = await signIn(credentials.email, credentials.password);
-      
+
       if (error) {
         console.error('Ошибка при входе:', error.message);
         return false;
       }
-      
+
       return true;
     } catch (error) {
       console.error('Ошибка при входе в систему:', error);
@@ -118,12 +118,12 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const { error, user } = await signUp(data.email, data.password, {
         name: data.name,
       });
-      
+
       if (error) {
         console.error('Ошибка при регистрации:', error.message);
         return false;
       }
-      
+
       return !!user;
     } catch (error) {
       console.error('Ошибка при регистрации:', error);
@@ -150,16 +150,16 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Обновление профиля пользователя
   const updateProfile = async (data: Partial<UserProfile>) => {
     if (!isAuthenticated) return;
-    
+
     try {
       setIsLoading(true);
       const { error } = await updateUserProfile(data);
-      
+
       if (error) {
         throw error;
       }
-      
-      setProfile(prev => prev ? { ...prev, ...data } : null);
+
+      setProfile((prev) => (prev ? { ...prev, ...data } : null));
     } catch (error) {
       console.error('Ошибка при обновлении профиля:', error);
     } finally {
@@ -168,17 +168,17 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   return (
-    <ProfileContext.Provider 
-      value={{ 
-        profile, 
-        isAuthenticated, 
-        login, 
+    <ProfileContext.Provider
+      value={{
+        profile,
+        isAuthenticated,
+        login,
         signup,
-        logout, 
+        logout,
         updateProfile,
         showProfileModal,
         setShowProfileModal,
-        isLoading
+        isLoading,
       }}
     >
       {children}
@@ -190,7 +190,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
 export const useProfile = () => {
   const context = useContext(ProfileContext);
   if (context === undefined) {
-    throw new Error("useProfile must be used within a ProfileProvider");
+    throw new Error('useProfile must be used within a ProfileProvider');
   }
   return context;
 };

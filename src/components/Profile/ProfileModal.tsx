@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { useProfile } from "../../lib/context/ProfileContext";
-import { XIcon, UserIcon, PhoneIcon, MapPinIcon, MailIcon, Loader2 } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { useProfile } from '../../lib/context/ProfileContext';
+import { XIcon, UserIcon, PhoneIcon, MapPinIcon, MailIcon, Loader2 } from 'lucide-react';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -14,19 +14,19 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
   const { profile, updateProfile, logout, isLoading } = useProfile();
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: ""
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
   });
 
   useEffect(() => {
     if (profile) {
       setFormData({
-        name: profile.name || "",
-        email: profile.email || "",
-        phone: profile.phone || "",
-        address: profile.address || ""
+        name: profile.name || '',
+        email: profile.email || '',
+        phone: profile.phone || '',
+        address: profile.address || '',
       });
     }
   }, [profile]);
@@ -35,14 +35,14 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
     await updateProfile({
       name: formData.name,
       phone: formData.phone,
-      address: formData.address
+      address: formData.address,
     });
     setEditMode(false);
   };
@@ -67,8 +67,8 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 50, opacity: 0 }}
-            transition={{ type: "spring", damping: 25 }}
-            onClick={e => e.stopPropagation()}
+            transition={{ type: 'spring', damping: 25 }}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Шапка профиля */}
             <div className="relative h-32 bg-gradient-to-r from-blue-4 to-indigo-500">
@@ -80,7 +80,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               >
                 <XIcon className="h-5 w-5 text-white" />
               </Button>
-              
+
               <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
                 <div className="w-32 h-32 rounded-full border-4 border-white bg-gray-200 flex items-center justify-center overflow-hidden">
                   {profile.avatar ? (
@@ -91,7 +91,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 </div>
               </div>
             </div>
-            
+
             {/* Информация профиля */}
             <div className="pt-20 pb-6 px-6">
               <h2 className="text-2xl font-semibold text-center text-gray-1">
@@ -103,16 +103,16 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                     className="text-center font-semibold"
                   />
                 ) : (
-                  profile.name || "Пользователь"
+                  profile.name || 'Пользователь'
                 )}
               </h2>
-              
+
               <div className="mt-6 space-y-4">
                 <div className="flex items-center">
                   <MailIcon className="h-5 w-5 text-blue-4 mr-3" />
                   <span>{profile.email}</span>
                 </div>
-                
+
                 <div className="flex items-center">
                   <PhoneIcon className="h-5 w-5 text-blue-4 mr-3" />
                   {editMode ? (
@@ -123,10 +123,10 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                       placeholder="Введите номер телефона"
                     />
                   ) : (
-                    <span>{profile.phone || "Не указан"}</span>
+                    <span>{profile.phone || 'Не указан'}</span>
                   )}
                 </div>
-                
+
                 <div className="flex items-center">
                   <MapPinIcon className="h-5 w-5 text-blue-4 mr-3" />
                   {editMode ? (
@@ -137,11 +137,11 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                       placeholder="Введите адрес"
                     />
                   ) : (
-                    <span>{profile.address || "Не указан"}</span>
+                    <span>{profile.address || 'Не указан'}</span>
                   )}
                 </div>
               </div>
-              
+
               <div className="mt-8 flex space-x-3">
                 {editMode ? (
                   <>
@@ -156,7 +156,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                           Сохранение...
                         </>
                       ) : (
-                        "Сохранить"
+                        'Сохранить'
                       )}
                     </Button>
                     <Button

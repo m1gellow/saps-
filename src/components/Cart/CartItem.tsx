@@ -1,11 +1,9 @@
-import React from "react";
-import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
-import { CartItem as CartItemType } from "../../lib/types";
-import { useCart } from "../../lib/context/CartContext";
-import { QuantitySelector } from "../ProductCard/QuantitySelector";
-import { motion } from "framer-motion";
-import { Trash2Icon } from "lucide-react";
+import React from 'react';
+import { CartItem as CartItemType } from '../../lib/types';
+import { useCart } from '../../lib/context/CartContext';
+import { QuantitySelector } from '../ProductCard/QuantitySelector';
+import { motion } from 'framer-motion';
+import { Trash2Icon } from 'lucide-react';
 
 interface CartItemProps {
   item: CartItemType;
@@ -29,7 +27,7 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="flex items-center justify-between p-4 border-b border-gray-200"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -38,15 +36,11 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
       layout
     >
       <div className="flex items-center space-x-4">
-        <motion.div 
+        <motion.div
           className="w-16 h-16 bg-gray-50 rounded-md flex items-center justify-center p-1"
           whileHover={{ scale: 1.05 }}
         >
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-contain"
-          />
+          <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
         </motion.div>
         <div>
           <h3 className="font-normal text-[#333333] text-lg">
@@ -56,15 +50,15 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
           <p className="text-gray-1 font-semibold">{formatPrice(product.price)}</p>
         </div>
       </div>
-      
+
       <div className="flex items-center space-x-4">
-        <QuantitySelector 
+        <QuantitySelector
           quantity={quantity}
           onDecrease={handleDecreaseQuantity}
           onIncrease={handleIncreaseQuantity}
           small
         />
-        
+
         <motion.button
           className="text-red-500 hover:text-red-700 flex items-center justify-center"
           onClick={() => removeFromCart(product.id)}

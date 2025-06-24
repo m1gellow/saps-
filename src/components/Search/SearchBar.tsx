@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Input } from "../ui/input";
-import { fuzzySearch } from "../../lib/levenshtein";
-import { Product } from "../../lib/types";
-import { motion, AnimatePresence } from "framer-motion";
-import { SearchIcon, XIcon } from "lucide-react";
+import React, { useState, useEffect, useRef } from 'react';
+import { Input } from '../ui/input';
+import { fuzzySearch } from '../../lib/levenshtein';
+import { Product } from '../../lib/types';
+import { motion, AnimatePresence } from 'framer-motion';
+import { SearchIcon, XIcon } from 'lucide-react';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -11,7 +11,7 @@ interface SearchBarProps {
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] }) => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -26,9 +26,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -39,10 +39,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
     }
 
     // Фильтрация продуктов по запросу с использованием нечеткого поиска
-    const filtered = products.filter(product => 
-      fuzzySearch(query, product.name, 2) || 
-      fuzzySearch(query, product.brand, 1)
-    ).slice(0, 5); // Ограничиваем до 5 предложений
+    const filtered = products
+      .filter((product) => fuzzySearch(query, product.name, 2) || fuzzySearch(query, product.brand, 1))
+      .slice(0, 5); // Ограничиваем до 5 предложений
 
     setSuggestions(filtered);
     setFocusedIndex(-1);
@@ -51,12 +50,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = e.target.value;
     setQuery(newQuery);
-    
+
     if (newQuery.trim()) {
       setShowSuggestions(true);
     } else {
       setShowSuggestions(false);
-      onSearch("");
+      onSearch('');
     }
   };
 
@@ -74,29 +73,25 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (suggestions.length === 0) return;
-    
+
     // Навигация по списку предложений с помощью клавиатуры
-    if (e.key === "ArrowDown") {
+    if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setFocusedIndex(prev => 
-        prev < suggestions.length - 1 ? prev + 1 : 0
-      );
-    } else if (e.key === "ArrowUp") {
+      setFocusedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+    } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setFocusedIndex(prev => 
-        prev > 0 ? prev - 1 : suggestions.length - 1
-      );
-    } else if (e.key === "Enter" && focusedIndex >= 0) {
+      setFocusedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+    } else if (e.key === 'Enter' && focusedIndex >= 0) {
       e.preventDefault();
       handleSuggestionClick(suggestions[focusedIndex]);
-    } else if (e.key === "Escape") {
+    } else if (e.key === 'Escape') {
       setShowSuggestions(false);
     }
   };
 
   const clearSearch = () => {
-    setQuery("");
-    onSearch("");
+    setQuery('');
+    onSearch('');
     setShowSuggestions(false);
     if (inputRef.current) {
       inputRef.current.focus();
@@ -121,7 +116,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
             <div className="absolute w-[27px] h-[27px] top-[7px] left-[9px] bg-blue-4 bg-opacity-20 rounded-[13.5px] border border-solid border-blue-4 flex items-center justify-center">
               <SearchIcon className="w-3.5 h-3.5 text-gray-700" />
             </div>
-            
+
             {query && (
               <button
                 type="button"
@@ -137,7 +132,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
         {/* Выпадающие подсказки */}
         <AnimatePresence>
           {showSuggestions && suggestions.length > 0 && (
-            <motion.div 
+            <motion.div
               className="absolute z-20 w-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -146,20 +141,16 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
             >
               <ul>
                 {suggestions.map((suggestion, index) => (
-                  <motion.li 
-                    key={suggestion.id} 
+                  <motion.li
+                    key={suggestion.id}
                     className={`px-4 py-2 cursor-pointer transition-colors ${
                       index !== suggestions.length - 1 ? 'border-b border-gray-100' : ''
                     } ${index === focusedIndex ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
                     onClick={() => handleSuggestionClick(suggestion)}
-                    whileHover={{ backgroundColor: "rgba(23, 204, 197, 0.1)" }}
+                    whileHover={{ backgroundColor: 'rgba(23, 204, 197, 0.1)' }}
                   >
                     <div className="flex items-center">
-                      <img 
-                        src={suggestion.image} 
-                        alt={suggestion.name} 
-                        className="w-8 h-8 object-contain mr-2"
-                      />
+                      <img src={suggestion.image} alt={suggestion.name} className="w-8 h-8 object-contain mr-2" />
                       <div>
                         <div className="text-sm font-medium text-gray-800">{suggestion.name}</div>
                         <div className="text-xs text-gray-500">{suggestion.brand}</div>

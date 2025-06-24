@@ -1,11 +1,11 @@
-import React from "react";
-import { useCart } from "../../lib/context/CartContext";
-import { CartItem } from "./CartItem";
-import { Button } from "../ui/button";
-import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, X } from "lucide-react";
-import { Link } from "react-router-dom";
-import clsx from "clsx";
+import React from 'react';
+import { useCart } from '../../lib/context/CartContext';
+import { CartItem } from './CartItem';
+import { Button } from '../ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingBag, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import clsx from 'clsx';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -13,20 +13,16 @@ interface CartDropdownProps {
   className?: string;
 }
 
-export const CartDropdown: React.FC<CartDropdownProps> = ({ 
-  isOpen, 
-  onClose,
-  className 
-}) => {
+export const CartDropdown: React.FC<CartDropdownProps> = ({ isOpen, onClose, className }) => {
   const { cartItems, totalItems, totalPrice, clearCart } = useCart();
 
   if (!isOpen) return null;
 
   return (
-    <motion.div 
+    <motion.div
       className={clsx(
-        "w-[320px] sm:w-[350px] bg-white shadow-lg rounded-lg z-50 max-h-[80vh] overflow-auto",
-        className
+        'w-[320px] sm:w-[350px] bg-white shadow-lg rounded-lg z-50 max-h-[80vh] overflow-auto',
+        className,
       )}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -37,13 +33,13 @@ export const CartDropdown: React.FC<CartDropdownProps> = ({
       <div className="p-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">Корзина ({totalItems})</h2>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={(e) => {
               e.stopPropagation();
               onClose();
-            }} 
+            }}
             className="hover:bg-gray-100 rounded-full h-8 w-8 p-0"
           >
             <X className="h-5 w-5" />
@@ -74,15 +70,12 @@ export const CartDropdown: React.FC<CartDropdownProps> = ({
 
             <div className="flex space-x-2">
               <Link to="/cart" className="w-full">
-                <Button 
-                  className="w-full bg-blue-4 hover:bg-teal-600 rounded-[53px] text-white"
-                  onClick={onClose}
-                >
+                <Button className="w-full bg-blue-4 hover:bg-teal-600 rounded-[53px] text-white" onClick={onClose}>
                   Перейти в корзину
                 </Button>
               </Link>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="rounded-[53px] border-[#333333] hover:bg-gray-100 whitespace-nowrap"
                 onClick={(e) => {
                   e.stopPropagation();

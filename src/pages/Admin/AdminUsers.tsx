@@ -1,18 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  X, 
-  Check, 
-  User,
-  Loader2
-} from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Lock, Eye, EyeOff, X, Check, User, Loader2 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { getAdminUsers } from '../../lib/api/admin';
@@ -29,20 +17,20 @@ export const AdminUsers = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Загрузка пользователей
   useEffect(() => {
     const fetchUsers = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const { users, error } = await getAdminUsers();
-        
+
         if (error) {
           throw error;
         }
-        
+
         setUsers(users);
       } catch (err) {
         console.error('Ошибка при загрузке пользователей:', err);
@@ -51,35 +39,36 @@ export const AdminUsers = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchUsers();
   }, []);
-  
+
   // Filter users based on search, role and status
   useEffect(() => {
     let filtered = [...users];
-    
+
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter(user => 
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (user) =>
+          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
-    
+
     // Filter by role
     if (roleFilter !== 'all') {
-      filtered = filtered.filter(user => user.role === roleFilter);
+      filtered = filtered.filter((user) => user.role === roleFilter);
     }
-    
+
     // Filter by status
     if (statusFilter !== 'all') {
-      filtered = filtered.filter(user => user.status === statusFilter);
+      filtered = filtered.filter((user) => user.status === statusFilter);
     }
-    
+
     setFilteredUsers(filtered);
   }, [searchTerm, roleFilter, statusFilter, users]);
-  
+
   // Handle creating a new user
   const handleCreateUser = () => {
     setSelectedUser({
@@ -89,35 +78,35 @@ export const AdminUsers = () => {
       role: 'customer',
       status: 'active',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
     });
     setIsUserModalOpen(true);
   };
-  
+
   // Handle editing a user
   const handleEditUser = (user) => {
     setSelectedUser({
       ...user,
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
     });
     setIsUserModalOpen(true);
   };
-  
+
   // Handle deleting a user
   const handleDeleteUser = (user) => {
     setSelectedUser(user);
     setIsDeleteModalOpen(true);
   };
-  
+
   // Confirm user deletion
   const confirmDeleteUser = async () => {
     setIsLoading(true);
-    
+
     try {
       // В реальном приложении здесь был бы API-запрос для удаления пользователя
       // Мы просто обновляем локальное состояние
-      setUsers(users.filter(user => user.id !== selectedUser.id));
+      setUsers(users.filter((user) => user.id !== selectedUser.id));
       setIsDeleteModalOpen(false);
     } catch (error) {
       console.error('Ошибка при удалении пользователя:', error);
@@ -125,68 +114,62 @@ export const AdminUsers = () => {
       setIsLoading(false);
     }
   };
-  
+
   // Save user data
   const handleSaveUser = async (userData) => {
     setIsLoading(true);
-    
+
     try {
       if (userData.id) {
         // Update existing user - в реальном приложении здесь был бы API-запрос
-        setUsers(users.map(user => 
-          user.id === userData.id ? { ...userData, lastLogin: user.lastLogin } : user
-        ));
+        setUsers(users.map((user) => (user.id === userData.id ? { ...userData, lastLogin: user.lastLogin } : user)));
       } else {
         // Create new user - в реальном приложении здесь был бы API-запрос
         // Для прототипа добавим нового пользователя с имитацией ID и даты создания
         const { data, error } = await supabase.auth.signUp({
           email: userData.email,
-          password: userData.password
+          password: userData.password,
         });
-        
+
         if (error) throw error;
-        
+
         if (data.user) {
           const newUser = {
             ...userData,
             id: data.user.id,
-            lastLogin: new Date().toISOString()
+            lastLogin: new Date().toISOString(),
           };
-          
+
           // Создаем запись в таблице user_profiles для нового пользователя
-          const { error: profileError } = await supabase
-            .from('user_profiles')
-            .insert({
-              id: data.user.id,
-              email: userData.email,
-              name: userData.name
-            });
-            
+          const { error: profileError } = await supabase.from('user_profiles').insert({
+            id: data.user.id,
+            email: userData.email,
+            name: userData.name,
+          });
+
           if (profileError) {
             console.error('Ошибка при создании профиля пользователя:', profileError);
           }
-          
+
           // Если пользователь администратор или менеджер, добавляем его в таблицу admins
           if (userData.role === 'admin' || userData.role === 'manager') {
-            const { error: adminError } = await supabase
-              .from('admins')
-              .insert({
-                id: data.user.id,
-                username: userData.email.split('@')[0], // Простой способ создать имя пользователя
-                name: userData.name,
-                role: userData.role
-              });
-              
+            const { error: adminError } = await supabase.from('admins').insert({
+              id: data.user.id,
+              username: userData.email.split('@')[0], // Простой способ создать имя пользователя
+              name: userData.name,
+              role: userData.role,
+            });
+
             if (adminError) {
               console.error('Ошибка при добавлении пользователя в администраторы:', adminError);
             }
           }
-          
+
           // Добавляем пользователя в наш список
           setUsers([...users, newUser]);
         }
       }
-      
+
       setIsUserModalOpen(false);
     } catch (error) {
       console.error('Ошибка при сохранении пользователя:', error);
@@ -194,7 +177,7 @@ export const AdminUsers = () => {
       setIsLoading(false);
     }
   };
-  
+
   // Format date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -203,10 +186,10 @@ export const AdminUsers = () => {
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
-  
+
   // Get role badge class
   const getRoleBadgeClass = (role) => {
     switch (role) {
@@ -220,7 +203,7 @@ export const AdminUsers = () => {
         return 'bg-gray-100 text-gray-800';
     }
   };
-  
+
   // Get role label
   const getRoleLabel = (role) => {
     switch (role) {
@@ -234,7 +217,7 @@ export const AdminUsers = () => {
         return role;
     }
   };
-  
+
   // Get status badge class
   const getStatusBadgeClass = (status) => {
     switch (status) {
@@ -246,7 +229,7 @@ export const AdminUsers = () => {
         return 'bg-gray-100 text-gray-800';
     }
   };
-  
+
   // Get status label
   const getStatusLabel = (status) => {
     switch (status) {
@@ -279,7 +262,7 @@ export const AdminUsers = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <h1 className="text-2xl font-bold text-gray-800">Пользователи</h1>
-        <Button 
+        <Button
           className="bg-blue-4 hover:bg-teal-600 text-white rounded-full flex items-center gap-2"
           onClick={handleCreateUser}
         >
@@ -287,7 +270,7 @@ export const AdminUsers = () => {
           Добавить пользователя
         </Button>
       </div>
-      
+
       {/* Фильтры и поиск */}
       <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
@@ -302,7 +285,7 @@ export const AdminUsers = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
             <div className="relative">
               <select
@@ -316,7 +299,7 @@ export const AdminUsers = () => {
                 <option value="customer">Клиенты</option>
               </select>
             </div>
-            
+
             <div className="relative">
               <select
                 className="w-full h-10 pl-3 pr-10 rounded-md border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-4"
@@ -331,28 +314,46 @@ export const AdminUsers = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Таблица пользователей */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Пользователь
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Email
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Роль
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Статус
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Последний вход
               </th>
-              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Действия
               </th>
             </tr>
@@ -383,22 +384,22 @@ export const AdminUsers = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.email}
-                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-full ${getRoleBadgeClass(user.role)}`}>
+                    <span
+                      className={`px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-full ${getRoleBadgeClass(user.role)}`}
+                    >
                       {getRoleLabel(user.role)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-full ${getStatusBadgeClass(user.status)}`}>
+                    <span
+                      className={`px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-full ${getStatusBadgeClass(user.status)}`}
+                    >
                       {getStatusLabel(user.status)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatDate(user.lastLogin)}
-                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(user.lastLogin)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
                       <button
@@ -423,7 +424,7 @@ export const AdminUsers = () => {
           </tbody>
         </table>
       </div>
-      
+
       {/* Модальное окно создания/редактирования пользователя */}
       {isUserModalOpen && selectedUser && (
         <UserFormModal
@@ -433,7 +434,7 @@ export const AdminUsers = () => {
           isLoading={isLoading}
         />
       )}
-      
+
       {/* Модальное окно подтверждения удаления */}
       {isDeleteModalOpen && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -490,36 +491,36 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSave, is
   const [formData, setFormData] = useState(user);
   const [errors, setErrors] = useState<any>({});
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
-    
+
     // Clear error when field is edited
     if (errors[name]) {
       setErrors({
         ...errors,
-        [name]: undefined
+        [name]: undefined,
       });
     }
   };
-  
+
   const validateForm = () => {
     const newErrors: any = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = 'Имя обязательно';
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email обязателен';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Некорректный email';
     }
-    
+
     // Validate password only for new users or if password field is not empty
     if (!formData.id || formData.password) {
       if (!formData.id && !formData.password) {
@@ -527,26 +528,26 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSave, is
       } else if (formData.password && formData.password.length < 6) {
         newErrors.password = 'Пароль должен быть не менее 6 символов';
       }
-      
+
       if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = 'Пароли не совпадают';
       }
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       // Remove confirm password field before saving
       const { confirmPassword, ...userData } = formData;
       onSave(userData);
     }
   };
-  
+
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -563,14 +564,11 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSave, is
           <h2 className="text-xl font-semibold text-gray-800">
             {user.id ? 'Редактирование пользователя' : 'Создание пользователя'}
           </h2>
-          <button
-            className="p-1 rounded-full hover:bg-gray-100 text-gray-500"
-            onClick={onClose}
-          >
+          <button className="p-1 rounded-full hover:bg-gray-100 text-gray-500" onClick={onClose}>
             <X size={20} />
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Имя</label>
@@ -581,11 +579,9 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSave, is
               onChange={handleChange}
               className={errors.name ? 'border-red-300' : ''}
             />
-            {errors.name && (
-              <p className="mt-1 text-xs text-red-500">{errors.name}</p>
-            )}
+            {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <Input
@@ -595,11 +591,9 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSave, is
               onChange={handleChange}
               className={errors.email ? 'border-red-300' : ''}
             />
-            {errors.email && (
-              <p className="mt-1 text-xs text-red-500">{errors.email}</p>
-            )}
+            {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Роль</label>
             <select
@@ -613,7 +607,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSave, is
               <option value="admin">Администратор</option>
             </select>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Статус</label>
             <select
@@ -626,7 +620,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSave, is
               <option value="inactive">Неактивен</option>
             </select>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {user.id ? 'Пароль (оставьте пустым, чтобы не менять)' : 'Пароль'}
@@ -651,11 +645,9 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSave, is
                 )}
               </button>
             </div>
-            {errors.password && (
-              <p className="mt-1 text-xs text-red-500">{errors.password}</p>
-            )}
+            {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Подтверждение пароля</label>
             <div className="relative">
@@ -667,11 +659,9 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSave, is
                 className={errors.confirmPassword ? 'border-red-300' : ''}
               />
             </div>
-            {errors.confirmPassword && (
-              <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>
-            )}
+            {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
           </div>
-          
+
           <div className="flex justify-end space-x-3 pt-4">
             <Button
               type="button"
@@ -682,11 +672,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSave, is
             >
               Отмена
             </Button>
-            <Button
-              type="submit"
-              className="bg-blue-4 hover:bg-teal-600 text-white gap-1"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="bg-blue-4 hover:bg-teal-600 text-white gap-1" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />

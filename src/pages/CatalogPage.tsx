@@ -7,9 +7,10 @@ import { RecommendedProducts } from '../components/ProductCard/RecommendedProduc
 import { getAllProducts, getProductsByCategory } from '../lib/api/products';
 import { Product } from '../lib/types';
 import { FilterSideBar } from '../components/FilterSideBar/FilterSideBar';
-import { SupRentalSection } from '../screens/Frame/sections/SupRentalSection';
+
 import { SortOptions } from '../components/SortOptions/SortOptions';
 import { Pagination } from '../components/Pagination/Pagination';
+import { SupRentalSection } from '../sections/SupRentalSection';
 
 export const CatalogPage: React.FC = () => {
   const { filters, toggleBrandFilter, setPriceRange, resetFilters, getFilteredPrice } = useFilters();

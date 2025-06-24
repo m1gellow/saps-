@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { useProfile } from "../../lib/context/ProfileContext";
-import { XIcon, UserIcon, LockIcon, MailIcon, Loader2 } from "lucide-react";
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { useProfile } from '../../lib/context/ProfileContext';
+import { XIcon, UserIcon, LockIcon, MailIcon, Loader2 } from 'lucide-react';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -14,57 +14,57 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const { login, signup, isLoading } = useProfile();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: ""
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setError("");
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isLoginMode && formData.password !== formData.confirmPassword) {
-      setError("Пароли не совпадают");
+      setError('Пароли не совпадают');
       return;
     }
-    
+
     try {
       if (isLoginMode) {
         const success = await login({ email: formData.email, password: formData.password });
         if (success) {
           onClose();
         } else {
-          setError("Ошибка авторизации. Проверьте введенные данные.");
+          setError('Ошибка авторизации. Проверьте введенные данные.');
         }
       } else {
-        const success = await signup({ 
-          name: formData.name, 
-          email: formData.email, 
-          password: formData.password 
+        const success = await signup({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
         });
-        
+
         if (success) {
           onClose();
         } else {
-          setError("Ошибка при регистрации. Проверьте введенные данные или попробуйте другой email.");
+          setError('Ошибка при регистрации. Проверьте введенные данные или попробуйте другой email.');
         }
       }
     } catch (err) {
-      setError("Произошла ошибка. Пожалуйста, попробуйте позже.");
+      setError('Произошла ошибка. Пожалуйста, попробуйте позже.');
       console.error(err);
     }
   };
 
   const toggleMode = () => {
     setIsLoginMode(!isLoginMode);
-    setError("");
+    setError('');
   };
 
   return (
@@ -82,29 +82,18 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 50, opacity: 0 }}
-            transition={{ type: "spring", damping: 25 }}
-            onClick={e => e.stopPropagation()}
+            transition={{ type: 'spring', damping: 25 }}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold text-gray-1">
-                {isLoginMode ? "Вход" : "Регистрация"}
-              </h2>
-              <Button
-                className="p-1"
-                onClick={onClose}
-                variant="ghost"
-                size="icon"
-              >
+              <h2 className="text-2xl font-semibold text-gray-1">{isLoginMode ? 'Вход' : 'Регистрация'}</h2>
+              <Button className="p-1" onClick={onClose} variant="ghost" size="icon">
                 <XIcon className="h-5 w-5 text-gray-500" />
               </Button>
             </div>
-            
-            {error && (
-              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
-                {error}
-              </div>
-            )}
-            
+
+            {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">{error}</div>}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLoginMode && (
                 <div className="space-y-2">
@@ -127,7 +116,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               )}
-              
+
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email
@@ -148,7 +137,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Пароль
@@ -170,7 +159,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                   />
                 </div>
               </div>
-              
+
               {!isLoginMode && (
                 <div className="space-y-2">
                   <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
@@ -193,7 +182,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               )}
-              
+
               <Button
                 type="submit"
                 className="w-full bg-blue-4 hover:bg-blue-600 text-white py-2 rounded-[53px] flex items-center justify-center"
@@ -204,19 +193,17 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Подождите...
                   </>
-                ) : isLoginMode ? "Войти" : "Зарегистрироваться"}
+                ) : isLoginMode ? (
+                  'Войти'
+                ) : (
+                  'Зарегистрироваться'
+                )}
               </Button>
             </form>
-            
+
             <div className="mt-6 text-center">
-              <button
-                type="button"
-                onClick={toggleMode}
-                className="text-blue-4 hover:underline text-sm"
-              >
-                {isLoginMode
-                  ? "Нет аккаунта? Зарегистрируйтесь"
-                  : "Уже есть аккаунт? Войдите"}
+              <button type="button" onClick={toggleMode} className="text-blue-4 hover:underline text-sm">
+                {isLoginMode ? 'Нет аккаунта? Зарегистрируйтесь' : 'Уже есть аккаунт? Войдите'}
               </button>
             </div>
           </motion.div>

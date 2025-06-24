@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { CartItem, Product } from "../types";
-import { supabase } from "../supabase";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { CartItem, Product } from '../types';
+import { supabase } from '../supabase';
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -28,7 +28,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         setCartItems(JSON.parse(savedCart));
       } catch (error) {
-        console.error("Ошибка при загрузке корзины из localStorage:", error);
+        console.error('Ошибка при загрузке корзины из localStorage:', error);
         localStorage.removeItem(CART_STORAGE_KEY);
       }
     }
@@ -42,7 +42,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Обновление общего количества и цены при изменении корзины
   useEffect(() => {
     const itemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    
+
     // Преобразование строковых цен в числа для расчета
     const price = cartItems.reduce((sum, item) => {
       const priceValue = item.product.priceValue || 0;
@@ -55,16 +55,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Добавление товара в корзину
   const addToCart = (product: Product, quantity = 1) => {
-    setCartItems(prevItems => {
+    setCartItems((prevItems) => {
       // Проверяем, есть ли уже этот товар в корзине
-      const existingItem = prevItems.find(item => item.product.id === product.id);
-      
+      const existingItem = prevItems.find((item) => item.product.id === product.id);
+
       if (existingItem) {
         // Если есть, увеличиваем количество
-        return prevItems.map(item => 
-          item.product.id === product.id 
-          ? { ...item, quantity: item.quantity + quantity } 
-          : item
+        return prevItems.map((item) =>
+          item.product.id === product.id ? { ...item, quantity: item.quantity + quantity } : item,
         );
       } else {
         // Если нет, добавляем новый товар
@@ -75,7 +73,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Удаление товара из корзины
   const removeFromCart = (productId: number) => {
-    setCartItems(prevItems => prevItems.filter(item => item.product.id !== productId));
+    setCartItems((prevItems) => prevItems.filter((item) => item.product.id !== productId));
   };
 
   // Обновление количества товара
@@ -84,13 +82,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       removeFromCart(productId);
       return;
     }
-    
-    setCartItems(prevItems => 
-      prevItems.map(item => 
-        item.product.id === productId 
-        ? { ...item, quantity } 
-        : item
-      )
+
+    setCartItems((prevItems) =>
+      prevItems.map((item) => (item.product.id === productId ? { ...item, quantity } : item)),
     );
   };
 
@@ -100,15 +94,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <CartContext.Provider 
-      value={{ 
-        cartItems, 
-        addToCart, 
-        removeFromCart, 
-        updateQuantity, 
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
         clearCart,
         totalItems,
-        totalPrice
+        totalPrice,
       }}
     >
       {children}
@@ -120,7 +114,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useCart = () => {
   const context = useContext(CartContext);
   if (context === undefined) {
-    throw new Error("useCart must be used within a CartProvider");
+    throw new Error('useCart must be used within a CartProvider');
   }
   return context;
 };

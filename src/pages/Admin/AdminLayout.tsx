@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  FileText, 
-  Users, 
-  Settings, 
-  LogOut, 
-  ChevronDown, 
-  Menu, 
-  X
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  FileText,
+  Users,
+  Settings,
+  LogOut,
+  ChevronDown,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useAdmin } from '../../lib/context/AdminContext';
 import { Link, Outlet, useLocation } from 'react-router-dom';
@@ -73,14 +73,10 @@ export const AdminLayout = () => {
                 <Link
                   to={item.path}
                   className={`flex items-center px-3 py-2 rounded-md transition-colors ${
-                    isActive(item.path)
-                      ? 'bg-blue-4 bg-opacity-10 text-blue-4'
-                      : 'text-gray-700 hover:bg-gray-100'
+                    isActive(item.path) ? 'bg-blue-4 bg-opacity-10 text-blue-4' : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  <span className={`${isActive(item.path) ? 'text-blue-4' : 'text-gray-500'}`}>
-                    {item.icon}
-                  </span>
+                  <span className={`${isActive(item.path) ? 'text-blue-4' : 'text-gray-500'}`}>{item.icon}</span>
                   <motion.span
                     initial={{ opacity: sidebarOpen ? 1 : 0, width: sidebarOpen ? 'auto' : 0 }}
                     animate={{ opacity: sidebarOpen ? 1 : 0, width: sidebarOpen ? 'auto' : 0 }}
@@ -115,10 +111,7 @@ export const AdminLayout = () => {
       <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 shadow-sm">
         <div className="flex items-center justify-between p-4">
           <div className="font-bold text-lg text-blue-4">Волны&Горы Админ</div>
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1 rounded-full hover:bg-gray-200"
-          >
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-1 rounded-full hover:bg-gray-200">
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -154,11 +147,7 @@ export const AdminLayout = () => {
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <span
-                          className={`${isActive(item.path) ? 'text-blue-4' : 'text-gray-500'}`}
-                        >
-                          {item.icon}
-                        </span>
+                        <span className={`${isActive(item.path) ? 'text-blue-4' : 'text-gray-500'}`}>{item.icon}</span>
                         <span className="ml-3">{item.title}</span>
                       </Link>
                     </li>

@@ -1,4 +1,4 @@
-import { Order } from "../../../../lib/types";
+import { Order } from '../../../../lib/types';
 import { Check, Truck, Clock, X, ShoppingBag } from 'lucide-react';
 
 // Форматирование даты
@@ -9,7 +9,7 @@ export const formatDate = (dateString: string) => {
     month: '2-digit',
     year: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 };
 
@@ -50,13 +50,7 @@ export const getStatusIcon = (status: string) => {
 };
 
 // Получить список доступных статусов заказов
-export const getAvailableStatuses = () => [
-  'Ожидает оплаты', 
-  'Оплачен', 
-  'Доставляется', 
-  'Завершен', 
-  'Отменен'
-];
+export const getAvailableStatuses = () => ['Ожидает оплаты', 'Оплачен', 'Доставляется', 'Завершен', 'Отменен'];
 
 // Сортировка заказов
 export const sortOrders = (orders: Order[], field: string, direction: 'asc' | 'desc') => {
@@ -70,9 +64,7 @@ export const sortOrders = (orders: Order[], field: string, direction: 'asc' | 'd
     } else {
       const fieldA = a[field].toString();
       const fieldB = b[field].toString();
-      return direction === 'asc'
-        ? fieldA.localeCompare(fieldB)
-        : fieldB.localeCompare(fieldA);
+      return direction === 'asc' ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
     }
   });
 };

@@ -1,5 +1,5 @@
-import { supabase } from "../supabase";
-import { Order } from "../types";
+import { supabase } from '../supabase';
+import { Order } from '../types';
 
 // Получение всех заказов для админ-панели
 export async function getAdminOrders() {
@@ -22,18 +22,18 @@ export async function getAdminOrders() {
           .from('order_items')
           .select('*, products(*)')
           .eq('order_id', order.id);
-          
+
         if (itemsError) {
           console.error(`Ошибка при получении позиций для заказа ${order.id}:`, itemsError);
           return null;
         }
 
         // Форматируем товары заказа
-        const items = orderItems.map(item => ({
+        const items = orderItems.map((item) => ({
           id: item.id,
           name: item.products.name,
           price: item.price,
-          quantity: item.quantity
+          quantity: item.quantity,
         }));
 
         return {
@@ -47,14 +47,14 @@ export async function getAdminOrders() {
           paymentMethod: order.payment_method,
           items,
           address: order.delivery_address,
-          notes: order.notes
+          notes: order.notes,
         };
-      })
+      }),
     );
 
     // Удаляем null элементы (в случае ошибок)
-    const orders = formattedOrders.filter(order => order !== null) as Order[];
-    
+    const orders = formattedOrders.filter((order) => order !== null) as Order[];
+
     return { orders, error: null };
   } catch (error) {
     console.error('Ошибка при получении заказов для админ-панели:', error);
@@ -87,17 +87,17 @@ async function getAdminOrderById(orderId: string) {
       .from('order_items')
       .select('*, products(*)')
       .eq('order_id', numericId);
-      
+
     if (itemsError) {
       throw itemsError;
     }
 
     // Форматируем товары заказа
-    const items = orderItems.map(item => ({
+    const items = orderItems.map((item) => ({
       id: item.id,
       name: item.products.name,
       price: item.price,
-      quantity: item.quantity
+      quantity: item.quantity,
     }));
 
     // Формируем объект заказа
@@ -112,7 +112,7 @@ async function getAdminOrderById(orderId: string) {
       paymentMethod: orderData.payment_method,
       items,
       address: orderData.delivery_address,
-      notes: orderData.notes
+      notes: orderData.notes,
     };
 
     return { order, error: null };
@@ -131,11 +131,7 @@ export async function updateOrderStatus(orderId: string, status: string) {
       throw new Error(`Некорректный ID заказа: ${orderId}`);
     }
 
-    const { data, error } = await supabase
-      .from('orders')
-      .update({ status: status })
-      .eq('id', numericId)
-      .select();
+    const { data, error } = await supabase.from('orders').update({ status: status }).eq('id', numericId).select();
 
     if (error) {
       throw error;
@@ -192,29 +188,29 @@ export async function getAdminDashboardStats() {
 
     if (recentOrdersError) throw recentOrdersError;
 
-    const formattedRecentOrders = recentOrders.map(order => ({
+    const formattedRecentOrders = recentOrders.map((order) => ({
       id: `ORD-${order.id}`,
       customer: order.customer_name,
       date: formatRelativeTime(order.created_at),
       status: order.status,
-      amount: `${order.total_amount.toLocaleString()} ₽`
+      amount: `${order.total_amount.toLocaleString()} ₽`,
     }));
 
-    return { 
-      newOrdersToday: newOrdersToday || 0, 
-      revenueToday, 
-      lowStockItems, 
+    return {
+      newOrdersToday: newOrdersToday || 0,
+      revenueToday,
+      lowStockItems,
       recentOrders: formattedRecentOrders,
-      error: null 
+      error: null,
     };
   } catch (error) {
     console.error('Ошибка при получении статистики для дашборда:', error);
-    return { 
-      newOrdersToday: 0, 
-      revenueToday: 0, 
-      lowStockItems: [], 
+    return {
+      newOrdersToday: 0,
+      revenueToday: 0,
+      lowStockItems: [],
       recentOrders: [],
-      error 
+      error,
     };
   }
 }
@@ -242,29 +238,25 @@ function formatRelativeTime(isoDate: string) {
 export async function getAdminUsers() {
   try {
     // Получаем профили пользователей
-    const { data: userProfiles, error: profilesError } = await supabase
-      .from('user_profiles')
-      .select('*');
+    const { data: userProfiles, error: profilesError } = await supabase.from('user_profiles').select('*');
 
     if (profilesError) throw profilesError;
 
     // Получаем администраторов для определения ролей
-    const { data: admins, error: adminsError } = await supabase
-      .from('admins')
-      .select('id, role');
+    const { data: admins, error: adminsError } = await supabase.from('admins').select('id, role');
 
     if (adminsError) throw adminsError;
 
     // Формируем список пользователей с ролями
-    const users = userProfiles.map(profile => {
-      const adminInfo = admins.find(admin => admin.id === profile.id);
+    const users = userProfiles.map((profile) => {
+      const adminInfo = admins.find((admin) => admin.id === profile.id);
       return {
         id: profile.id,
         name: profile.name || 'Пользователь',
         email: profile.email,
         role: adminInfo ? adminInfo.role : 'customer',
         lastLogin: profile.created_at, // Используем дату создания как заглушку
-        status: 'active'
+        status: 'active',
       };
     });
 

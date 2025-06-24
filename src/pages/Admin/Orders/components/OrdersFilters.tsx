@@ -18,7 +18,7 @@ export const OrdersFilters: React.FC<OrdersFiltersProps> = ({
   dateFilter,
   onSearchChange,
   onStatusChange,
-  onDateChange
+  onDateChange,
 }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
@@ -34,7 +34,7 @@ export const OrdersFilters: React.FC<OrdersFiltersProps> = ({
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </div>
-        
+
         <div className="flex flex-wrap gap-3">
           <div className="relative">
             <select
@@ -53,7 +53,7 @@ export const OrdersFilters: React.FC<OrdersFiltersProps> = ({
               <ChevronDown size={18} className="text-gray-400" />
             </div>
           </div>
-          
+
           <div className="relative">
             <select
               className="h-10 pl-3 pr-10 rounded-md border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-4"
@@ -70,11 +70,8 @@ export const OrdersFilters: React.FC<OrdersFiltersProps> = ({
               <ChevronDown size={18} className="text-gray-400" />
             </div>
           </div>
-          
-          <Button
-            variant="outline"
-            className="h-10 px-4 border-gray-300 text-gray-700 gap-2"
-          >
+
+          <Button variant="outline" className="h-10 px-4 border-gray-300 text-gray-700 gap-2">
             <Filter size={18} />
             <span className="hidden sm:inline">Фильтры</span>
           </Button>

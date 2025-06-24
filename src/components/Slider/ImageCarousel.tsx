@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { Button } from "../ui/button";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { Button } from '../ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 interface ImageCarouselProps {
   images: string[];
@@ -10,30 +10,26 @@ interface ImageCarouselProps {
   interval?: number;
 }
 
-export const ImageCarousel: React.FC<ImageCarouselProps> = ({
-  images,
-  autoPlay = true,
-  interval = 5000
-}) => {
+export const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, autoPlay = true, interval = 5000 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [direction, setDirection] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   const variants = {
     enter: (direction: number) => ({
       x: direction > 0 ? 1000 : -1000,
-      opacity: 0
+      opacity: 0,
     }),
     center: {
       x: 0,
-      opacity: 1
+      opacity: 1,
     },
     exit: (direction: number) => ({
       x: direction < 0 ? 1000 : -1000,
-      opacity: 0
-    })
+      opacity: 0,
+    }),
   };
 
   useEffect(() => {
@@ -43,7 +39,7 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
         setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
       }, interval);
     }
-    
+
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
@@ -53,9 +49,7 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
     if (timerRef.current) clearInterval(timerRef.current);
     setIsPlaying(false);
     setDirection(-1);
-    setCurrentIndex((prevIndex) => 
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
-    );
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
   };
 
   const goToNext = () => {
@@ -73,36 +67,28 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
   };
 
   const actionButtons = [
-    { id: 1, text: "Купить Sup", delay: 0.4, href: "/catalog" },
-    { id: 2, text: "Аренда", delay: 0.5, href: "/catalog" },
-    { id: 3, text: "Аксессуары", delay: 0.6, href: "/catalog" },
+    { id: 1, text: 'Купить Sup', delay: 0.4, href: '/catalog' },
+    { id: 2, text: 'Аренда', delay: 0.5, href: '/catalog' },
+    { id: 3, text: 'Аксессуары', delay: 0.6, href: '/catalog' },
   ];
 
   return (
-    <div 
+    <div
       className="relative w-full h-full overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Левая кнопка навигации */}
       <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-50">
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="pointer-events-auto"
-        >
-          <SliderButton onClick={goToPrevious} type="prev"/>
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="pointer-events-auto">
+          <SliderButton onClick={goToPrevious} type="prev" />
         </motion.div>
       </div>
 
       {/* Правая кнопка навигации */}
       <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-50">
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="pointer-events-auto"
-        >
-          <SliderButton onClick={goToNext} type="next"/>
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="pointer-events-auto">
+          <SliderButton onClick={goToNext} type="next" />
         </motion.div>
       </div>
 
@@ -116,8 +102,8 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
           animate="center"
           exit="exit"
           transition={{
-            x: { type: "spring", stiffness: 300, damping: 30 },
-            opacity: { duration: 0.3 }
+            x: { type: 'spring', stiffness: 300, damping: 30 },
+            opacity: { duration: 0.3 },
           }}
           className="w-full h-full absolute inset-0"
         >
@@ -133,22 +119,11 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
               </h2>
 
               <div className="relative z-40">
-                <div
-                  className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4"
-                >
+                <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4">
                   {actionButtons.map((button) => (
-                    <div
-                      key={button.id}
-                      className="relative z-40"
-                    >
-                      <Link 
-                        to={button.href} 
-                        className="block"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Button
-                          className="w-[120px] sm:w-[177px] h-[40px] sm:h-[53px] bg-gray-1 rounded-[53px] shadow-lg font-['Nunito_Sans',Helvetica] font-semibold text-base sm:text-xl relative z-40"
-                        >
+                    <div key={button.id} className="relative z-40">
+                      <Link to={button.href} className="block" onClick={(e) => e.stopPropagation()}>
+                        <Button className="w-[120px] sm:w-[177px] h-[40px] sm:h-[53px] bg-gray-1 rounded-[53px] shadow-lg font-['Nunito_Sans',Helvetica] font-semibold text-base sm:text-xl relative z-40">
                           {button.text}
                         </Button>
                       </Link>
@@ -157,11 +132,11 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
                 </div>
               </div>
             </div>
-            
+
             {/* Изображение с pointer-events-none */}
-            <img 
-              src={images[currentIndex]} 
-              alt={`Slide ${currentIndex + 1}`} 
+            <img
+              src={images[currentIndex]}
+              alt={`Slide ${currentIndex + 1}`}
               className="w-full h-full object-cover pointer-events-none"
             />
           </div>
@@ -176,9 +151,7 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
               key={index}
               onClick={() => goToSlide(index)}
               className={`w-3 h-3 rounded-full border ${
-                index === currentIndex 
-                ? "bg-white border-white" 
-                : "bg-transparent border-white"
+                index === currentIndex ? 'bg-white border-white' : 'bg-transparent border-white'
               }`}
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.9 }}
@@ -193,7 +166,7 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({
 
 interface SliderButtonProps {
   onClick: () => void;
-  type: "next" | "prev";
+  type: 'next' | 'prev';
 }
 
 const SliderButton: React.FC<SliderButtonProps> = ({ onClick, type }) => {
@@ -206,9 +179,9 @@ const SliderButton: React.FC<SliderButtonProps> = ({ onClick, type }) => {
         e.stopPropagation();
         onClick();
       }}
-      aria-label={type === "next" ? "Следующий слайд" : "Предыдущий слайд"}
+      aria-label={type === 'next' ? 'Следующий слайд' : 'Предыдущий слайд'}
     >
-      {type === "next" ? (
+      {type === 'next' ? (
         <ChevronRightIcon className="h-6 w-6 text-white" />
       ) : (
         <ChevronLeftIcon className="h-6 w-6 text-white" />

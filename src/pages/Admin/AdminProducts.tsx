@@ -1,26 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Filter, 
-  ChevronDown, 
-  Check, 
-  X, 
-  Image,
-  Loader2
-} from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Filter, ChevronDown, Check, X, Image, Loader2 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { 
-  getAllProducts, 
-  getAllCategories,
-  createProduct,
-  updateProduct,
-  deleteProduct
-} from '../../lib/api/products';
+import { getAllProducts, getAllCategories, createProduct, updateProduct, deleteProduct } from '../../lib/api/products';
 import { Product } from '../../lib/types';
 
 export const AdminProducts = () => {
@@ -35,9 +18,9 @@ export const AdminProducts = () => {
   const [sortBy, setSortBy] = useState({ field: 'id', direction: 'asc' });
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState<any[]>([]);
-  
+
   const productsPerPage = 10;
-  
+
   // Загрузка товаров и категорий при монтировании компонента
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +29,7 @@ export const AdminProducts = () => {
         // Загружаем товары
         const productsData = await getAllProducts();
         setProducts(productsData);
-        
+
         // Загружаем категории
         const categoriesData = await getAllCategories();
         setCategories(categoriesData);
@@ -56,57 +39,57 @@ export const AdminProducts = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchData();
   }, []);
-  
+
   // Filter products based on search and category
   useEffect(() => {
     let filtered = [...products];
-    
+
     // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(
-        product => 
+        (product) =>
           product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.id.toString().includes(searchTerm)
+          product.id.toString().includes(searchTerm),
       );
     }
-    
+
     // Filter by category
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
+      filtered = filtered.filter((product) => product.category === selectedCategory);
     }
-    
+
     // Sort products
     filtered.sort((a, b) => {
       const fieldA = sortBy.field === 'price' ? a.priceValue : a[sortBy.field as keyof Product];
       const fieldB = sortBy.field === 'price' ? b.priceValue : b[sortBy.field as keyof Product];
-      
+
       if (sortBy.direction === 'asc') {
         return fieldA > fieldB ? 1 : -1;
       } else {
         return fieldA < fieldB ? 1 : -1;
       }
     });
-    
+
     setFilteredProducts(filtered);
     setCurrentPage(1);
   }, [searchTerm, selectedCategory, products, sortBy]);
-  
+
   // Get current products
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-  
+
   // Edit or create product
   const handleEditProduct = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
-  
+
   const handleNewProduct = () => {
     setSelectedProduct({
       id: 0,
@@ -117,25 +100,25 @@ export const AdminProducts = () => {
       image: '/1-201-11.png',
       favoriteIcon: '/group-213.png',
       category: '',
-      inStock: true
+      inStock: true,
     });
     setIsModalOpen(true);
   };
-  
+
   const handleDeleteProduct = (product: Product) => {
     setSelectedProduct(product);
     setIsDeleteModalOpen(true);
   };
-  
+
   const confirmDelete = async () => {
     if (!selectedProduct) return;
-    
+
     setIsLoading(true);
     try {
       const { success, error } = await deleteProduct(selectedProduct.id);
-      
+
       if (success) {
-        setProducts(products.filter(p => p.id !== selectedProduct.id));
+        setProducts(products.filter((p) => p.id !== selectedProduct.id));
         setIsDeleteModalOpen(false);
       } else {
         console.error('Ошибка при удалении товара:', error);
@@ -148,22 +131,22 @@ export const AdminProducts = () => {
       setIsLoading(false);
     }
   };
-  
+
   const handleSortChange = (field: string) => {
-    setSortBy(prev => ({
+    setSortBy((prev) => ({
       field,
-      direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
+      direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc',
     }));
   };
-  
+
   const handleSaveProduct = async (formData: Product) => {
     setIsLoading(true);
-    
+
     try {
       if (formData.id) {
         // Обновляем существующий товар
         const { success, error } = await updateProduct(formData.id, formData);
-        
+
         if (success) {
           // Обновляем список товаров
           const updatedProducts = await getAllProducts();
@@ -175,7 +158,7 @@ export const AdminProducts = () => {
       } else {
         // Добавляем новый товар
         const { data, error } = await createProduct(formData);
-        
+
         if (data) {
           // Обновляем список товаров
           const updatedProducts = await getAllProducts();
@@ -193,7 +176,7 @@ export const AdminProducts = () => {
       setIsModalOpen(false);
     }
   };
-  
+
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -204,7 +187,7 @@ export const AdminProducts = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <h1 className="text-2xl font-bold text-gray-800">Товары</h1>
-        <Button 
+        <Button
           className="bg-blue-4 hover:bg-teal-600 text-white rounded-full flex items-center gap-2"
           onClick={handleNewProduct}
         >
@@ -212,7 +195,7 @@ export const AdminProducts = () => {
           Добавить товар
         </Button>
       </div>
-      
+
       {/* Фильтры и поиск */}
       <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
@@ -227,7 +210,7 @@ export const AdminProducts = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
             <div className="relative">
               <select
@@ -236,7 +219,7 @@ export const AdminProducts = () => {
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
                 <option value="all">Все категории</option>
-                {categories.map(category => (
+                {categories.map((category) => (
                   <option key={category.id} value={category.name}>
                     {category.name}
                   </option>
@@ -246,18 +229,15 @@ export const AdminProducts = () => {
                 <ChevronDown size={18} className="text-gray-400" />
               </div>
             </div>
-            
-            <Button
-              variant="outline"
-              className="h-10 px-4 border-gray-300 text-gray-700 gap-2"
-            >
+
+            <Button variant="outline" className="h-10 px-4 border-gray-300 text-gray-700 gap-2">
               <Filter size={18} />
               <span className="hidden sm:inline">Фильтры</span>
             </Button>
           </div>
         </div>
       </div>
-      
+
       {/* Таблица товаров */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-x-auto">
         {isLoading ? (
@@ -269,48 +249,68 @@ export const AdminProducts = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSortChange('id')}>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSortChange('id')}
+                >
                   <div className="flex items-center space-x-1">
                     <span>ID</span>
-                    {sortBy.field === 'id' && (
-                      <span>{sortBy.direction === 'asc' ? '↑' : '↓'}</span>
-                    )}
+                    {sortBy.field === 'id' && <span>{sortBy.direction === 'asc' ? '↑' : '↓'}</span>}
                   </div>
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Изображение
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSortChange('name')}>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSortChange('name')}
+                >
                   <div className="flex items-center space-x-1">
                     <span>Название</span>
-                    {sortBy.field === 'name' && (
-                      <span>{sortBy.direction === 'asc' ? '↑' : '↓'}</span>
-                    )}
+                    {sortBy.field === 'name' && <span>{sortBy.direction === 'asc' ? '↑' : '↓'}</span>}
                   </div>
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSortChange('brand')}>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSortChange('brand')}
+                >
                   <div className="flex items-center space-x-1">
                     <span>Бренд</span>
-                    {sortBy.field === 'brand' && (
-                      <span>{sortBy.direction === 'asc' ? '↑' : '↓'}</span>
-                    )}
+                    {sortBy.field === 'brand' && <span>{sortBy.direction === 'asc' ? '↑' : '↓'}</span>}
                   </div>
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSortChange('price')}>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                  onClick={() => handleSortChange('price')}
+                >
                   <div className="flex items-center space-x-1">
                     <span>Цена</span>
-                    {sortBy.field === 'price' && (
-                      <span>{sortBy.direction === 'asc' ? '↑' : '↓'}</span>
-                    )}
+                    {sortBy.field === 'price' && <span>{sortBy.direction === 'asc' ? '↑' : '↓'}</span>}
                   </div>
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Категория
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Статус
                 </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Действия
                 </th>
               </tr>
@@ -324,30 +324,22 @@ export const AdminProducts = () => {
                   transition={{ duration: 0.3 }}
                   className="hover:bg-gray-50"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    #{product.id}
-                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{product.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="h-10 w-10 rounded-md border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden">
                       <img src={product.image} alt={product.name} className="h-full object-contain" />
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    {product.name}
-                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{product.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.brand}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{product.price}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {product.brand}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                    {product.price}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
-                      {product.category}
-                    </span>
+                    <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">{product.category}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${product.inStock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${product.inStock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                    >
                       {product.inStock ? 'В наличии' : 'Нет в наличии'}
                     </span>
                   </td>
@@ -369,7 +361,7 @@ export const AdminProducts = () => {
                   </td>
                 </motion.tr>
               ))}
-              
+
               {currentProducts.length === 0 && !isLoading && (
                 <tr>
                   <td colSpan={8} className="px-6 py-10 text-center text-gray-500">
@@ -380,7 +372,7 @@ export const AdminProducts = () => {
             </tbody>
           </table>
         )}
-        
+
         {/* Пагинация */}
         {filteredProducts.length > 0 && (
           <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
@@ -419,7 +411,7 @@ export const AdminProducts = () => {
                     <span className="sr-only">Предыдущая</span>
                     &laquo;
                   </button>
-                  
+
                   {Array.from({ length: totalPages }).map((_, index) => (
                     <button
                       key={index}
@@ -433,7 +425,7 @@ export const AdminProducts = () => {
                       {index + 1}
                     </button>
                   ))}
-                  
+
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
@@ -448,7 +440,7 @@ export const AdminProducts = () => {
           </div>
         )}
       </div>
-      
+
       {/* Модальное окно редактирования */}
       {isModalOpen && selectedProduct && (
         <ProductFormModal
@@ -459,7 +451,7 @@ export const AdminProducts = () => {
           isLoading={isLoading}
         />
       )}
-      
+
       {/* Модальное окно подтверждения удаления */}
       {isDeleteModalOpen && selectedProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -516,61 +508,61 @@ interface ProductFormModalProps {
 const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories, onClose, onSave, isLoading }) => {
   const [formData, setFormData] = useState<Product>(product);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+
     if (name === 'price') {
       // Только числа, пробелы и буквы Р, р, P, p
       const sanitizedValue = value.replace(/[^0-9\s\u0420\u0440Pp.]/g, '');
-      
+
       // Извлекаем числовое значение для priceValue
       const priceValue = parseFloat(sanitizedValue.replace(/[^\d.]/g, '')) || 0;
-      
+
       setFormData({
         ...formData,
         [name]: sanitizedValue,
-        priceValue: priceValue
+        priceValue: priceValue,
       });
     } else if (name === 'inStock') {
       setFormData({
         ...formData,
-        [name]: (e as React.ChangeEvent<HTMLInputElement>).target.checked
+        [name]: (e as React.ChangeEvent<HTMLInputElement>).target.checked,
       });
     } else {
       setFormData({
         ...formData,
-        [name]: value
+        [name]: value,
       });
     }
   };
-  
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = 'Название товара обязательно';
     }
-    
+
     if (!formData.brand.trim()) {
       newErrors.brand = 'Бренд обязателен';
     }
-    
+
     if (!formData.price.trim()) {
       newErrors.price = 'Цена обязательна';
     }
-    
+
     if (!formData.category) {
       newErrors.category = 'Категория обязательна';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       onSave(formData);
     }
@@ -588,15 +580,11 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
           <h2 className="text-xl font-semibold text-gray-800">
             {product.id ? 'Редактирование товара' : 'Добавление товара'}
           </h2>
-          <button
-            className="p-1 rounded-full hover:bg-gray-100 text-gray-500"
-            onClick={onClose}
-            disabled={isLoading}
-          >
+          <button className="p-1 rounded-full hover:bg-gray-100 text-gray-500" onClick={onClose} disabled={isLoading}>
             <X size={20} />
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
@@ -624,7 +612,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
                 </div>
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Название товара</label>
               <Input
@@ -636,7 +624,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
               />
               {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Бренд</label>
               <Input
@@ -648,7 +636,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
               />
               {errors.brand && <p className="mt-1 text-xs text-red-500">{errors.brand}</p>}
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Цена</label>
               <Input
@@ -661,7 +649,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
               />
               {errors.price && <p className="mt-1 text-xs text-red-500">{errors.price}</p>}
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Категория</label>
               <select
@@ -681,7 +669,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
               </select>
               {errors.category && <p className="mt-1 text-xs text-red-500">{errors.category}</p>}
             </div>
-            
+
             <div className="md:col-span-2">
               <label className="flex items-center">
                 <input
@@ -694,7 +682,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
                 <span className="ml-2 text-sm text-gray-700">В наличии</span>
               </label>
             </div>
-            
+
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Описание товара</label>
               <textarea
@@ -707,7 +695,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
               ></textarea>
             </div>
           </div>
-          
+
           <div className="mt-8 flex justify-end space-x-3">
             <Button
               type="button"

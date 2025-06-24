@@ -38,11 +38,11 @@ export const FavoritesPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Избранное</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <AnimatePresence>
           {favorites.map((product) => (
-            <motion.div 
+            <motion.div
               key={product.id}
               className="bg-white rounded-lg shadow-md overflow-hidden"
               initial={{ opacity: 0, scale: 0.9 }}
@@ -53,37 +53,32 @@ export const FavoritesPage: React.FC = () => {
             >
               <div className="p-4 flex space-x-4">
                 <div className="w-24 h-24 bg-gray-100 rounded-md flex items-center justify-center p-2 flex-shrink-0">
-                  <img 
-                    src={product.image} 
-                    alt={product.name} 
-                    className="max-w-full max-h-full object-contain"
-                  />
+                  <img src={product.image} alt={product.name} className="max-w-full max-h-full object-contain" />
                 </div>
-                
+
                 <div className="flex-1">
                   <h3 className="font-normal text-[#333333] text-base">
                     <span>{product.name.split(' ')[0]} </span>
                     <span className="font-light">{product.name.split(' ').slice(1).join(' ')}</span>
                   </h3>
-                  
+
                   <p className="text-xs text-gray-500 mb-1">{product.brand}</p>
-                  
+
                   <p className="text-gray-1 font-semibold">{product.price}</p>
-                  
+
                   <div className="flex mt-2 space-x-2">
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button 
+                      <Button
                         className="h-9 rounded-full bg-blue-4 text-white text-sm px-3 flex items-center gap-1"
                         onClick={() => addToCart(product)}
                       >
-                        <ShoppingCartIcon className="w-4 h-4" />
-                        В корзину
+                        <ShoppingCartIcon className="w-4 h-4" />В корзину
                       </Button>
                     </motion.div>
-                    
+
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         className="h-9 rounded-full border-red-500 text-red-500 hover:bg-red-50 text-sm px-3"
                         onClick={() => removeFromFavorites(product.id)}
                       >
@@ -97,11 +92,11 @@ export const FavoritesPage: React.FC = () => {
           ))}
         </AnimatePresence>
       </div>
-      
+
       <div className="mt-8 flex justify-center">
         <Link to="/catalog">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="rounded-full text-blue-4 border-blue-4 hover:bg-blue-4 hover:text-white flex items-center gap-2"
           >
             <ArrowLeftIcon className="w-4 h-4" />

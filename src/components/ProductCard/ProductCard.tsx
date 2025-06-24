@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
-import { Product } from "../../lib/types";
-import { useCart } from "../../lib/context/CartContext";
-import { useFavorites } from "../../lib/context/FavoritesContext";
-import { ProductImage } from "./ProductImage";
-import { QuantitySelector } from "./QuantitySelector";
-import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Heart, Info, Star } from "lucide-react";
-import { Link } from "react-router-dom";
-import { AddedToCartModal } from "./AddedToCartModal";
+import React, { useState } from 'react';
+import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
+import { Product } from '../../lib/types';
+import { useCart } from '../../lib/context/CartContext';
+import { useFavorites } from '../../lib/context/FavoritesContext';
+import { ProductImage } from './ProductImage';
+import { QuantitySelector } from './QuantitySelector';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingCart, Heart, Info, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { AddedToCartModal } from './AddedToCartModal';
 
 interface ProductCardProps {
   product: Product;
@@ -69,20 +69,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <CardContent className="p-0">
             <div className="relative">
               <Link to={`/product/${product.id}`}>
-                <ProductImage 
-                  src={product.image} 
-                  alt={product.name} 
-                />
+                <ProductImage src={product.image} alt={product.name} />
               </Link>
-              <motion.button 
+              <motion.button
                 className="absolute w-[32px] h-[32px] top-3 right-3 bg-white rounded-full flex items-center justify-center cursor-pointer shadow-md border border-gray-100"
                 onClick={toggleFavorite}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                aria-label={isFavorite(product.id) ? "Удалить из избранного" : "Добавить в избранное"}
+                aria-label={isFavorite(product.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
               >
-                <Heart 
-                  className={`w-5 h-5 ${isFavorite(product.id) ? "text-red-500 fill-red-500" : "text-gray-400"}`} 
+                <Heart
+                  className={`w-5 h-5 ${isFavorite(product.id) ? 'text-red-500 fill-red-500' : 'text-gray-400'}`}
                 />
               </motion.button>
             </div>
@@ -93,18 +90,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   <span>{product.name.split(' ')[0]} </span>
                   <span className="font-light">{product.name.split(' ').slice(1).join(' ')}</span>
                 </div>
-                <div className="font-extralight text-black text-[15px]">
-                  {product.brand}
-                </div>
+                <div className="font-extralight text-black text-[15px]">{product.brand}</div>
               </div>
 
               <div className="flex flex-col items-center justify-center gap-3 w-full">
                 <div className="flex items-center justify-between w-full">
-                  <div className="font-semibold text-gray-1 text-2xl">
-                    {formatPrice(product.price)}
-                  </div>
+                  <div className="font-semibold text-gray-1 text-2xl">{formatPrice(product.price)}</div>
 
-                  <QuantitySelector 
+                  <QuantitySelector
                     quantity={quantity}
                     onDecrease={handleDecreaseQuantity}
                     onIncrease={handleIncreaseQuantity}
@@ -113,31 +106,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
                 <div className="flex items-center">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <Star 
-                      key={star} 
-                      className="w-4 h-4 text-yellow-400 fill-yellow-400" 
-                    />
+                    <Star key={star} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                   ))}
                 </div>
               </div>
 
               <div className="flex justify-between w-full gap-4 mt-2">
-                <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <Button 
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <Button
                     className="w-full max-w-[139px] h-[47px] bg-gray-1 rounded-[53px] text-white text-[15px] md:text-[17px] font-semibold shadow-[0px_8px_20px_#1960c640] transition-all duration-300 hover:bg-[#555555] flex items-center gap-2"
                     onClick={handleAddToCart}
                   >
-                    <ShoppingCart className="w-4 h-4" />
-                    В корзину
+                    <ShoppingCart className="w-4 h-4" />В корзину
                   </Button>
                 </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                >
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                   <Link to={`/product/${product.id}`}>
                     <Button
                       variant="outline"
@@ -157,11 +140,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* Модальное окно добавления в корзину */}
       <AnimatePresence>
         {showAddedToCart && (
-          <AddedToCartModal 
-            product={product}
-            isOpen={showAddedToCart}
-            onClose={() => setShowAddedToCart(false)}
-          />
+          <AddedToCartModal product={product} isOpen={showAddedToCart} onClose={() => setShowAddedToCart(false)} />
         )}
       </AnimatePresence>
     </>

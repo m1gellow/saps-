@@ -7,7 +7,11 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any | null }>;
-  signUp: (email: string, password: string, userData: { name: string }) => Promise<{ error: any | null; user: User | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    userData: { name: string },
+  ) => Promise<{ error: any | null; user: User | null }>;
   signOut: () => Promise<void>;
   updateUserProfile: (userData: { name?: string; phone?: string; address?: string }) => Promise<{ error: any | null }>;
   getUserProfile: () => Promise<any>;
@@ -24,12 +28,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Получение текущей сессии при загрузке
     const getSession = async () => {
       setLoading(true);
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
       if (error) {
         console.error('Ошибка при получении сессии:', error);
       }
-      
+
       setSession(session);
       setUser(session?.user || null);
       setLoading(false);
@@ -38,13 +45,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getSession();
 
     // Подписка на изменения в аутентификации
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user || null);
-        setLoading(false);
-      }
-    );
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user || null);
+      setLoading(false);
+    });
 
     return () => {
       subscription.unsubscribe();
@@ -80,15 +87,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Создаем профиль пользователя после регистрации
       if (data.user) {
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .insert([
-            {
-              id: data.user.id,
-              email: email,
-              name: userData.name,
-            },
-          ]);
+        const { error: profileError } = await supabase.from('user_profiles').insert([
+          {
+            id: data.user.id,
+            email: email,
+            name: userData.name,
+          },
+        ]);
 
         if (profileError) {
           console.error('Ошибка при создании профиля пользователя:', profileError);
@@ -119,11 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
-      const { error } = await supabase
-        .from('user_profiles')
-        .update(userData)
-        .eq('id', user.id)
-        .select();
+      const { error } = await supabase.from('user_profiles').update(userData).eq('id', user.id).select();
 
       return { error };
     } catch (error) {
@@ -139,11 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
+      const { data, error } = await supabase.from('user_profiles').select('*').eq('id', user.id).single();
 
       return { data, error };
     } catch (error) {

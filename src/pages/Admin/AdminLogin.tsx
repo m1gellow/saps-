@@ -15,17 +15,17 @@ export const AdminLogin = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       setError('Пожалуйста, введите email и пароль');
       return;
     }
-    
+
     setError('');
-    
+
     try {
       const success = await adminLogin({ email, password });
-      
+
       if (success) {
         navigate('/admin');
       } else {
@@ -113,7 +113,7 @@ export const AdminLogin = () => {
                   Вход...
                 </>
               ) : (
-                "Войти в систему"
+                'Войти в систему'
               )}
             </Button>
           </form>

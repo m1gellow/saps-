@@ -12,12 +12,7 @@ interface StatusChangeModalProps {
   onSave: (status: string) => void;
 }
 
-export const StatusChangeModal: React.FC<StatusChangeModalProps> = ({
-  order,
-  isOpen,
-  onClose,
-  onSave
-}) => {
+export const StatusChangeModal: React.FC<StatusChangeModalProps> = ({ order, isOpen, onClose, onSave }) => {
   if (!isOpen || !order) return null;
 
   const statuses = getAvailableStatuses();
@@ -31,26 +26,26 @@ export const StatusChangeModal: React.FC<StatusChangeModalProps> = ({
         transition={{ duration: 0.3 }}
       >
         <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Изменить статус заказа {order.id}
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-800">Изменить статус заказа {order.id}</h3>
         </div>
-        
+
         <div className="p-6 space-y-4">
           <p className="text-gray-600 mb-4">
-            Текущий статус: 
-            <span className={`ml-2 px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-full ${getStatusBadgeClass(order.status)}`}>
+            Текущий статус:
+            <span
+              className={`ml-2 px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-full ${getStatusBadgeClass(order.status)}`}
+            >
               {order.status}
             </span>
           </p>
-          
+
           <div className="space-y-3">
             {statuses.map((status) => (
               <button
                 key={status}
                 className={`w-full flex items-center justify-between p-3 rounded-md border ${
-                  order.status === status 
-                    ? 'border-blue-4 bg-blue-50' 
+                  order.status === status
+                    ? 'border-blue-4 bg-blue-50'
                     : 'border-gray-300 hover:border-blue-4 hover:bg-blue-50'
                 }`}
                 onClick={() => onSave(status)}
@@ -59,19 +54,14 @@ export const StatusChangeModal: React.FC<StatusChangeModalProps> = ({
                   {getStatusIcon(status)}
                   <span className="ml-2">{status}</span>
                 </div>
-                {order.status === status && (
-                  <Check size={18} className="text-blue-4" />
-                )}
+                {order.status === status && <Check size={18} className="text-blue-4" />}
               </button>
             ))}
           </div>
         </div>
-        
+
         <div className="p-6 border-t border-gray-200 flex justify-end">
-          <Button
-            variant="outline"
-            onClick={onClose}
-          >
+          <Button variant="outline" onClick={onClose}>
             Отмена
           </Button>
         </div>
