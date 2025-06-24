@@ -10,11 +10,11 @@ import { FilterSideBar } from '../components/FilterSideBar/FilterSideBar';
 
 import { SortOptions } from '../components/SortOptions/SortOptions';
 import { Pagination } from '../components/Pagination/Pagination';
-import { SupRentalSection } from '../sections/SupRentalSection';
+import { SupRentalSection } from '../sections/CategoriesSection';
 
 export const CatalogPage: React.FC = () => {
   const { filters, toggleBrandFilter, setPriceRange, resetFilters, getFilteredPrice } = useFilters();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -23,7 +23,7 @@ export const CatalogPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
-  
+
   // Загружаем все товары при инициализации
   useEffect(() => {
     const fetchProducts = async () => {
@@ -33,14 +33,14 @@ export const CatalogPage: React.FC = () => {
         setAllProducts(productsData);
         setIsLoading(false);
       } catch (error) {
-        console.error("Ошибка при загрузке товаров:", error);
+        console.error('Ошибка при загрузке товаров:', error);
         setIsLoading(false);
       }
     };
-    
+
     fetchProducts();
   }, []);
-  
+
   // Загружаем товары для текущей категории
   useEffect(() => {
     if (filters.activeCategory) {
@@ -52,13 +52,13 @@ export const CatalogPage: React.FC = () => {
           console.error(`Ошибка при загрузке товаров категории ${filters.activeCategory}:`, error);
         }
       };
-      
+
       fetchCategoryProducts();
     } else {
       setCategoryProducts([]);
     }
   }, [filters.activeCategory]);
-  
+
   // Обновление локальных слайдеров при изменении фильтров
   useEffect(() => {
     setSliderMin(filters.priceRange[0]);
@@ -69,41 +69,42 @@ export const CatalogPage: React.FC = () => {
   useEffect(() => {
     const applyFilters = () => {
       let filtered = [...allProducts];
-      
+
       // Category filter
       if (filters.activeCategory) {
-        filtered = filtered.filter(product => product.category === filters.activeCategory);
+        filtered = filtered.filter((product) => product.category === filters.activeCategory);
       }
-      
+
       // Brand filter
-      filtered = filtered.filter(product => {
-        const brandFilter = filters.brands.find(b => b.name === product.brand);
+      filtered = filtered.filter((product) => {
+        const brandFilter = filters.brands.find((b) => b.name === product.brand);
         return !brandFilter || brandFilter.checked;
       });
-      
+
       // Price filter
-      filtered = filtered.filter(product => 
-        product.priceValue >= filters.priceRange[0] && product.priceValue <= filters.priceRange[1]
+      filtered = filtered.filter(
+        (product) => product.priceValue >= filters.priceRange[0] && product.priceValue <= filters.priceRange[1],
       );
-      
+
       // Search filter
       if (searchQuery.trim()) {
-        filtered = filtered.filter(product => 
-          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          product.brand.toLowerCase().includes(searchQuery.toLowerCase())
+        filtered = filtered.filter(
+          (product) =>
+            product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            product.brand.toLowerCase().includes(searchQuery.toLowerCase()),
         );
       }
-      
+
       // Sort by price if selected
       if (sortOrder === 'asc') {
         filtered = filtered.sort((a, b) => a.priceValue - b.priceValue);
       } else if (sortOrder === 'desc') {
         filtered = filtered.sort((a, b) => b.priceValue - a.priceValue);
       }
-      
+
       return filtered;
     };
-    
+
     setFilteredProducts(applyFilters());
   }, [filters, searchQuery, sortOrder, allProducts]);
 
@@ -115,32 +116,26 @@ export const CatalogPage: React.FC = () => {
     setSortOrder(sortOrder === order ? null : order);
   };
 
-
   return (
     <div className="container mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Каталог товаров</h1>
-      
-      <SearchBar 
-        onSearch={handleSearch}
-        products={allProducts}
-      />
-        <SupRentalSection showMobileFilter={showMobileFilter} setShowMobileFilter={setShowMobileFilter}/>
-        <SortOptions handleSortClick={handleSortClick} sortOrder={sortOrder}/>
-     
+
+      <SearchBar onSearch={handleSearch} products={allProducts} />
+      <SupRentalSection showMobileFilter={showMobileFilter} setShowMobileFilter={setShowMobileFilter} />
+      <SortOptions handleSortClick={handleSortClick} sortOrder={sortOrder} />
 
       {/* Product grid with filter sidebar */}
       <div className="flex flex-col lg:flex-row w-full gap-4 lg:gap-8 mt-2">
         {/* Filter sidebar */}
-            {showMobileFilter && (
-               <FilterSideBar
-                  filters={filters}
-                  toggleBrandFilter={toggleBrandFilter}
-                  setPriceRange={setPriceRange}
-                  resetFilters={resetFilters}
-                  getFilteredPrice={getFilteredPrice}
-                />
-            )}
-           
+        {showMobileFilter && (
+          <FilterSideBar
+            filters={filters}
+            toggleBrandFilter={toggleBrandFilter}
+            setPriceRange={setPriceRange}
+            resetFilters={resetFilters}
+            getFilteredPrice={getFilteredPrice}
+          />
+        )}
 
         {/* Product grid */}
         <div className="flex-1">
@@ -151,36 +146,29 @@ export const CatalogPage: React.FC = () => {
           ) : (
             <>
               {filters.activeCategory && categoryProducts.length > 0 && (
-                <RecommendedProducts 
+                <RecommendedProducts
                   title={`Популярные ${filters.activeCategory}`}
                   products={categoryProducts.slice(0, 4)}
                 />
               )}
 
               <div className="flex-1">
-                              
                 <AnimatePresence>
-                    {filteredProducts.length > 0 && 
-                     <RecommendedProducts 
-                    title="Отфильтрованные товары"
-                    products={filteredProducts}
-                  />
-                    }
-                  </AnimatePresence>
-                  </div>
-              
+                  {filteredProducts.length > 0 && (
+                    <RecommendedProducts title="Отфильтрованные товары" products={filteredProducts} />
+                  )}
+                </AnimatePresence>
+              </div>
+
               {filteredProducts.length === 0 && !isLoading && (
-                <motion.div 
+                <motion.div
                   className="py-8 text-center text-gray-500"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
                 >
                   <p className="text-lg">Товары не найдены. Пожалуйста, измените параметры поиска.</p>
-                  <Button 
-                    className="mt-4 bg-blue-4 hover:bg-blue-600 text-white" 
-                    onClick={resetFilters}
-                  >
+                  <Button className="mt-4 bg-blue-4 hover:bg-blue-600 text-white" onClick={resetFilters}>
                     Сбросить все фильтры
                   </Button>
                 </motion.div>
@@ -191,16 +179,11 @@ export const CatalogPage: React.FC = () => {
       </div>
 
       {/* Pagination */}
-          <Pagination filteredProducts={filteredProducts}/>
+      <Pagination filteredProducts={filteredProducts} />
 
-      
-      
       {/* Рекомендуемые товары в конце страницы */}
       {filteredProducts.length > 0 && !isLoading && allProducts.length > 10 && (
-        <RecommendedProducts 
-          title="Вам также может понравиться"
-          products={allProducts.slice(10, 16)}
-        />
+        <RecommendedProducts title="Вам также может понравиться" products={allProducts.slice(10, 16)} />
       )}
     </div>
   );

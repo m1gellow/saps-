@@ -19,8 +19,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
   const [quantity, setQuantity] = useState(1);
-  const [showDetails, setShowDetails] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [showAddedToCart, setShowAddedToCart] = useState(false);
 
   const handleAddToCart = () => {
@@ -29,9 +27,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const handleDecreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
+    if (quantity > 1) setQuantity(quantity - 1);
   };
 
   const handleIncreaseQuantity = () => {
@@ -46,91 +42,110 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   };
 
-  const showProductDetails = () => {
-    setShowDetails(true);
-  };
-
   // Форматирование цены с пробелами между тысячами
   const formatPrice = (price: string) => {
-    return price.replace(/(\d)(?=(\d{3})+\s*\.)/g, '$1 ');
+    return price.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   };
 
   return (
     <>
       <motion.div
         whileHover={{ y: -5 }}
-        onHoverStart={() => setIsHovered(true)}
-        onHoverEnd={() => setIsHovered(false)}
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
+        className="w-full"
       >
-        <Card className="w-full max-w-[325px] h-auto bg-white rounded-[22px] shadow-[0px_0px_30px_#0000001a] transition-all duration-300 hover:shadow-[0px_10px_30px_#0000004d] overflow-hidden">
-          <CardContent className="p-0">
-            <div className="relative">
-              <Link to={`/product/${product.id}`}>
-                <ProductImage src={product.image} alt={product.name} />
+        <Card className="w-full max-w-[320px] h-full bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col">
+          <CardContent className="p-0 flex flex-col h-full">
+            {/* Изображение товара с кнопкой избранного */}
+            <div className="relative aspect-square">
+              <Link to={`/product/${product.id}`} className="block h-full">
+                <ProductImage 
+                  src={product.image} 
+                  alt={product.name}
+                  className="w-full h-full object-cover hover:opacity-90 transition-opacity"
+                />
               </Link>
+              
               <motion.button
-                className="absolute w-[32px] h-[32px] top-3 right-3 bg-white rounded-full flex items-center justify-center cursor-pointer shadow-md border border-gray-100"
+                className="absolute top-3 right-3 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-sm hover:bg-white transition-colors"
                 onClick={toggleFavorite}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 aria-label={isFavorite(product.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
               >
                 <Heart
-                  className={`w-5 h-5 ${isFavorite(product.id) ? 'text-red-500 fill-red-500' : 'text-gray-400'}`}
+                  className={`w-5 h-5 ${isFavorite(product.id) ? 'text-rose-500 fill-rose-500' : 'text-gray-400 hover:text-rose-400'}`}
                 />
               </motion.button>
             </div>
 
-            <div className="flex flex-col items-start justify-center gap-3 p-4 mt-4">
-              <div className="flex flex-col items-start gap-2.5">
-                <div className="font-normal text-[#333333] text-lg">
-                  <span>{product.name.split(' ')[0]} </span>
-                  <span className="font-light">{product.name.split(' ').slice(1).join(' ')}</span>
-                </div>
-                <div className="font-extralight text-black text-[15px]">{product.brand}</div>
+            {/* Информация о товаре */}
+            <div className="p-4 flex flex-col flex-grow">
+              {/* Бренд и название */}
+              <div className="mb-2">
+                <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  {product.brand}
+                </h3>
+                <Link to={`/product/${product.id}`}>
+                  <h2 className="text-lg font-semibold text-gray-900 mt-1 hover:text-primary line-clamp-2">
+                    {product.name}
+                  </h2>
+                </Link>
               </div>
 
-              <div className="flex flex-col items-center justify-center gap-3 w-full">
-                <div className="flex items-center justify-between w-full">
-                  <div className="font-semibold text-gray-1 text-2xl">{formatPrice(product.price)}</div>
+              {/* Рейтинг */}
+              <div className="flex items-center mb-3">
+                <div className="flex mr-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star 
+                      key={star} 
+                      className={`w-4 h-4 ${star <= 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500">(24)</span>
+              </div>
 
+              {/* Цена и количество */}
+              <div className="mt-auto">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-2xl font-bold text-gray-900">
+                    {formatPrice(product.price)} ₽
+                  </div>
                   <QuantitySelector
                     quantity={quantity}
                     onDecrease={handleDecreaseQuantity}
                     onIncrease={handleIncreaseQuantity}
+                    className="border-gray-200"
                   />
                 </div>
 
-                <div className="flex items-center">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex justify-between w-full gap-4 mt-2">
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Button
-                    className="w-full max-w-[139px] h-[47px] bg-gray-1 rounded-[53px] text-white text-[15px] md:text-[17px] font-semibold shadow-[0px_8px_20px_#1960c640] transition-all duration-300 hover:bg-[#555555] flex items-center gap-2"
-                    onClick={handleAddToCart}
-                  >
-                    <ShoppingCart className="w-4 h-4" />В корзину
-                  </Button>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Link to={`/product/${product.id}`}>
+                {/* Кнопки действий */}
+                <div className="flex gap-3">
+                  <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
                     <Button
-                      variant="outline"
-                      className="w-full max-w-[139px] h-[47px] rounded-[53px] text-gray-1 text-[15px] md:text-[17px] font-semibold border-[#333333] transition-all duration-300 hover:bg-[#f5f5f5] flex items-center gap-2"
+                      onClick={handleAddToCart}
+                      className="w-full h-12 rounded-lg bg-primary hover:bg-primary/90 shadow-sm transition-colors"
                     >
-                      <Info className="w-4 h-4" />
-                      Подробнее
+                      <ShoppingCart className="w-5 h-5 mr-2" />
+                      <span>В корзину</span>
                     </Button>
-                  </Link>
-                </motion.div>
+                  </motion.div>
+                  
+                  <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
+                    <Link to={`/product/${product.id}`} className="block w-full">
+                      <Button
+                        variant="outline"
+                        className="w-full h-12 rounded-lg border-gray-300 hover:bg-gray-50 transition-colors"
+                      >
+                        <Info className="w-5 h-5 mr-2" />
+                        <span>Подробнее</span>
+                      </Button>
+                    </Link>
+                  </motion.div>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -140,7 +155,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* Модальное окно добавления в корзину */}
       <AnimatePresence>
         {showAddedToCart && (
-          <AddedToCartModal product={product} isOpen={showAddedToCart} onClose={() => setShowAddedToCart(false)} />
+          <AddedToCartModal 
+            product={product} 
+            isOpen={showAddedToCart} 
+            onClose={() => setShowAddedToCart(false)} 
+          />
         )}
       </AnimatePresence>
     </>

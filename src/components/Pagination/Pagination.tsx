@@ -29,7 +29,6 @@ export const Pagination = ({ filteredProducts }: { filteredProducts: Product[] }
           </motion.button>
         </div>
       )}
-      )
     </>
   );
 };
