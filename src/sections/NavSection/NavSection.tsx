@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../../lib/context/CartContext';
-import { Grid2x2Plus, ShoppingBag, UserRound } from 'lucide-react';
+import { Grid2x2Plus, Menu, ShoppingBag, UserRound } from 'lucide-react';
 
 export const NavSection = (): JSX.Element => {
   const { totalItems } = useCart();
@@ -68,13 +68,15 @@ export const NavSection = (): JSX.Element => {
             </ul>
           </div>
 
-          <div className="flex items-center justify-center gap-[20px]">
+          <div className="md:flex hidden items-center justify-center gap-[20px]">
             <UserRound color="#333333" />
             <div className="gap-[8px] flex items-center">
               <ShoppingBag color="#333333" />
               <button className="bg-blue lg:flex hidden gap-[10px] p-[5px] font-light rounded-[8px]">3 000P</button>
             </div>
+            
           </div>
+          <Menu className='md:hidden' color="#333333"/>
         </div>
       </div>
 
