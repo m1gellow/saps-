@@ -16,7 +16,7 @@ export const SortOptions = ({
           <span className="text-sm text-gray-600">Сортировка:</span>
           <motion.button
             className={`px-3 py-1 text-sm rounded-full flex items-center ${
-              sortOrder === 'asc' ? 'bg-blue-4 text-white' : 'bg-gray-100 text-gray-600'
+              sortOrder === 'asc' ? 'bg-blue text-white' : 'bg-gray-100 text-gray-600'
             }`}
             onClick={() => handleSortClick('asc')}
             whileHover={{ scale: 1.05 }}
@@ -26,7 +26,7 @@ export const SortOptions = ({
           </motion.button>
           <motion.button
             className={`px-3 py-1 text-sm rounded-full flex items-center ${
-              sortOrder === 'desc' ? 'bg-blue-4 text-white' : 'bg-gray-100 text-gray-600'
+              sortOrder === 'desc' ? 'bg-blue text-white' : 'bg-gray-100 text-gray-600'
             }`}
             onClick={() => handleSortClick('desc')}
             whileHover={{ scale: 1.05 }}

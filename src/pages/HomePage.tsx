@@ -5,7 +5,7 @@ import { useCart } from '../lib/context/CartContext';
 import { getAllProducts } from '../lib/api/products';
 import { Product } from '../lib/types';
 import { FilterSideBar } from '../components/FilterSideBar/FilterSideBar';
-import { NewItemsSections } from '../sections/NewItemsSections/NewItemsSections';
+import { NewItemsSection } from '../sections/NewItemsSection/NewItemsSection';
 import { SupRentalSection } from '../sections/CategoriesSection';
 import { StockSection } from '../sections/StocksSection/StockSection';
 import { SectionWrapper } from '../components/ui/SectionWrapper';
@@ -96,7 +96,7 @@ export const HomePage: React.FC = () => {
 
         <SupRentalSection />
 
-        <NewItemsSections />
+        <NewItemsSection />
 
         <StockSection />
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, memo } from 'react';
+import React, { useCallback, useRef, memo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCart } from '../../lib/context/CartContext';
 import { useFavorites } from '../../lib/context/FavoritesContext';
@@ -6,27 +6,33 @@ import { Button } from '../ui/button';
 import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../lib/types';
+import { AddedToCartModal } from './AddedToCartModal';
 
-// Типы данных для рекомендуемых товаров
 interface RecommendedProductsProps {
   title?: string;
   products: Product[];
   showControls?: boolean;
 }
 
-// Компонент отдельного рекомендуемого товара для предотвращения лишних перерендеров
 const RecommendedProductItem = memo(
   ({
     product,
     addToCart,
     isFavorite,
     toggleFavorite,
+    showAddedModal,
   }: {
     product: Product;
     addToCart: (product: Product) => void;
     isFavorite: (id: number) => boolean;
     toggleFavorite: (product: Product) => void;
+    showAddedModal: (product: Product) => void;
   }) => {
+    const handleAddToCartClick = () => {
+      addToCart(product);
+      showAddedModal(product);
+    };
+
     return (
       <motion.div
         layout
@@ -38,7 +44,6 @@ const RecommendedProductItem = memo(
         transition={{ duration: 0.3 }}
       >
         <div className="relative">
-          {/* Изображение товара */}
           <Link to={`/product/${product.id}`}>
             <div className="h-40 flex items-center justify-center p-4 bg-gray-50 overflow-hidden">
               <img
@@ -48,19 +53,8 @@ const RecommendedProductItem = memo(
               />
             </div>
           </Link>
-
-          {/* Кнопка "Добавить в избранное" */}
-          <motion.button
-            className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100"
-            onClick={() => toggleFavorite(product)}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Heart className={`w-4 h-4 ${isFavorite(product.id) ? 'text-red-500 fill-red-500' : 'text-gray-400'}`} />
-          </motion.button>
         </div>
 
-        {/* Информация о товаре */}
         <div className="p-4">
           <Link to={`/product/${product.id}`}>
             <h4 className="font-medium text-gray-800 text-sm mb-1 line-clamp-2 h-10">{product.name}</h4>
@@ -70,8 +64,6 @@ const RecommendedProductItem = memo(
 
           <div className="flex justify-between items-center">
             <span className="font-bold text-gray-900">{product.price}</span>
-
-            {/* Индикатор рейтинга */}
             <div className="flex items-center">
               <div className="w-4 h-4">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -92,8 +84,8 @@ const RecommendedProductItem = memo(
           <div className="flex space-x-2 mt-3">
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="flex-1">
               <Button
-                className="w-full h-9 bg-gray-800 hover:bg-gray-700 text-white rounded-full text-xs flex items-center justify-center gap-1"
-                onClick={() => addToCart(product)}
+                className="w-full h-9 bg-blue hover:bg-gray-700 text-white rounded-full text-xs flex items-center justify-center gap-1"
+                onClick={handleAddToCartClick}
               >
                 <ShoppingCart className="w-3 h-3" />В корзину
               </Button>
@@ -121,8 +113,9 @@ export const RecommendedProducts: React.FC<RecommendedProductsProps> = memo(
     const { addToCart } = useCart();
     const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
     const containerRef = useRef<HTMLDivElement>(null);
+    const [modalProduct, setModalProduct] = useState<Product | null>(null);
+    const [showModal, setShowModal] = useState(false);
 
-    // Функция для обработки нажатия на кнопку "В корзину"
     const handleAddToCart = useCallback(
       (product: Product) => {
         addToCart(product);
@@ -130,7 +123,6 @@ export const RecommendedProducts: React.FC<RecommendedProductsProps> = memo(
       [addToCart],
     );
 
-    // Функция для обработки нажатия на кнопку "Добавить в избранное"
     const toggleFavorite = useCallback(
       (product: Product) => {
         if (isFavorite(product.id)) {
@@ -142,28 +134,29 @@ export const RecommendedProducts: React.FC<RecommendedProductsProps> = memo(
       [isFavorite, removeFromFavorites, addToFavorites],
     );
 
-    // Функция для перехода к следующему слайду
+    const showAddedModal = useCallback((product: Product) => {
+      setModalProduct(product);
+      setShowModal(true);
+    }, []);
+
     const nextSlide = useCallback(() => {
       if (containerRef.current) {
         containerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
       }
     }, []);
 
-    // Функция для перехода к предыдущему слайду
     const prevSlide = useCallback(() => {
       if (containerRef.current) {
         containerRef.current.scrollBy({ left: -300, behavior: 'smooth' });
       }
     }, []);
 
-    // Если продуктов нет, не рендерим секцию вообще
     if (!products || products.length === 0) {
       return null;
     }
 
     return (
       <div className="mt-8 mb-12 relative">
-        {/* Заголовок и элементы управления */}
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl md:text-2xl font-semibold text-gray-800">{title}</h3>
 
@@ -190,7 +183,6 @@ export const RecommendedProducts: React.FC<RecommendedProductsProps> = memo(
           )}
         </div>
 
-        {/* Контейнер для прокрутки товаров */}
         <div
           ref={containerRef}
           className="flex overflow-x-auto pb-4 space-x-4 scrollbar-hide snap-x"
@@ -206,9 +198,19 @@ export const RecommendedProducts: React.FC<RecommendedProductsProps> = memo(
               addToCart={handleAddToCart}
               isFavorite={isFavorite}
               toggleFavorite={toggleFavorite}
+              showAddedModal={showAddedModal}
             />
           ))}
         </div>
+
+        {/* Модальное окно добавления в корзину */}
+        {showModal && modalProduct && (
+          <AddedToCartModal
+            product={modalProduct}
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+          />
+        )}
       </div>
     );
   },

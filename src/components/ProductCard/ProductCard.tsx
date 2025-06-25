@@ -68,17 +68,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 />
               </Link>
               
-              <motion.button
-                className="absolute top-3 right-3 bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-sm hover:bg-white transition-colors"
-                onClick={toggleFavorite}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                aria-label={isFavorite(product.id) ? 'Удалить из избранного' : 'Добавить в избранное'}
-              >
-                <Heart
-                  className={`w-5 h-5 ${isFavorite(product.id) ? 'text-rose-500 fill-rose-500' : 'text-gray-400 hover:text-rose-400'}`}
-                />
-              </motion.button>
+             
             </div>
 
             {/* Информация о товаре */}

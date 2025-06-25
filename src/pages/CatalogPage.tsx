@@ -7,10 +7,8 @@ import { RecommendedProducts } from '../components/ProductCard/RecommendedProduc
 import { getAllProducts, getProductsByCategory } from '../lib/api/products';
 import { Product } from '../lib/types';
 import { FilterSideBar } from '../components/FilterSideBar/FilterSideBar';
-
 import { SortOptions } from '../components/SortOptions/SortOptions';
 import { Pagination } from '../components/Pagination/Pagination';
-import { SupRentalSection } from '../sections/CategoriesSection';
 
 export const CatalogPage: React.FC = () => {
   const { filters, toggleBrandFilter, setPriceRange, resetFilters, getFilteredPrice } = useFilters();
@@ -22,15 +20,24 @@ export const CatalogPage: React.FC = () => {
   const [sliderMax, setSliderMax] = useState(filters.priceRange[1]);
   const [isLoading, setIsLoading] = useState(true);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [popularProducts, setPopularProducts] = useState<Product[]>([]);
+  const [newProducts, setNewProducts] = useState<Product[]>([]);
   const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
 
-  // Загружаем все товары при инициализации
+  // Загрузка всех товаров
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
       try {
-        const productsData = await getAllProducts();
-        setAllProducts(productsData);
+        const products = await getAllProducts();
+        setAllProducts(products);
+        
+        // Популярные товары (первые 6)
+        setPopularProducts(products.slice(0, 6));
+        
+        // Новые поступления (следующие 4)
+        setNewProducts(products.slice(6, 10));
+        
         setIsLoading(false);
       } catch (error) {
         console.error('Ошибка при загрузке товаров:', error);
@@ -121,10 +128,8 @@ export const CatalogPage: React.FC = () => {
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Каталог товаров</h1>
 
       <SearchBar onSearch={handleSearch} products={allProducts} />
-      <SupRentalSection showMobileFilter={showMobileFilter} setShowMobileFilter={setShowMobileFilter} />
       <SortOptions handleSortClick={handleSortClick} sortOrder={sortOrder} />
 
-      {/* Product grid with filter sidebar */}
       <div className="flex flex-col lg:flex-row w-full gap-4 lg:gap-8 mt-2">
         {/* Filter sidebar */}
         {showMobileFilter && (
@@ -145,22 +150,40 @@ export const CatalogPage: React.FC = () => {
             </div>
           ) : (
             <>
-              {filters.activeCategory && categoryProducts.length > 0 && (
+              {/* Популярные товары */}
+              {popularProducts.length > 0 && (
+                <RecommendedProducts
+                  title="Популярные товары"
+                  products={popularProducts}
+                />
+              )}
+
+              {/* Товары категории */}
+              {/* {filters.activeCategory && categoryProducts.length > 0 && (
                 <RecommendedProducts
                   title={`Популярные ${filters.activeCategory}`}
                   products={categoryProducts.slice(0, 4)}
                 />
-              )}
+              )} */}
 
-              <div className="flex-1">
+              {/* Отфильтрованные товары */}
+              {/* <div className="flex-1">
                 <AnimatePresence>
                   {filteredProducts.length > 0 && (
                     <RecommendedProducts title="Отфильтрованные товары" products={filteredProducts} />
                   )}
                 </AnimatePresence>
-              </div>
+              </div> */}
 
-              {filteredProducts.length === 0 && !isLoading && (
+              {/* Новые поступления */}
+              {newProducts.length > 0 && (
+                <RecommendedProducts
+                  title="Новые поступления"
+                  products={newProducts}
+                />
+              )}
+
+              {/* {filteredProducts.length === 0 && !isLoading && (
                 <motion.div
                   className="py-8 text-center text-gray-500"
                   initial={{ opacity: 0 }}
@@ -172,7 +195,7 @@ export const CatalogPage: React.FC = () => {
                     Сбросить все фильтры
                   </Button>
                 </motion.div>
-              )}
+              )} */}
             </>
           )}
         </div>

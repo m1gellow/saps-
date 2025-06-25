@@ -6,7 +6,6 @@ import { Product } from './lib/types';
 import { GlobalProviders } from './providers/GlobalProviders';
 import { getAllProducts } from './lib/api/products';
 
-
 // Components
 import { NavSection } from './sections/NavSection';
 import { FooterSection } from './sections/FooterSection';
@@ -32,39 +31,6 @@ import { AdminOrdersPage } from './pages/Admin/Orders';
 import { AdminContent } from './pages/Admin/AdminContent';
 import { AdminUsers } from './pages/Admin/AdminUsers';
 import { AdminSettings } from './pages/Admin/AdminSettings';
-
-const AdminRoutes = () => {
-  return (
-    <Routes>
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdminDashboard />} />
-        <Route path="products" element={<AdminProducts />} />
-        <Route path="orders" element={<AdminOrdersPage />} />
-        <Route path="content" element={<AdminContent />} />
-        <Route path="users" element={<AdminUsers />} />
-        <Route path="settings" element={<AdminSettings />} />
-      </Route>
-      <Route path="*" element={<Navigate to={'/admin'} replace />} />
-    </Routes>
-  );
-};
-
-const MainRoutes = () => {
-  return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/catalog" element={<CatalogPage />} />
-      <Route path="/contacts" element={<ContactsPage />} />
-      <Route path="/cart" element={<CartPage />} />
-      <Route path="/favorites" element={<FavoritesPage />} />
-      <Route path="/product/:id" element={<ProductPage />} />
-      <Route path="/compare" element={<ComparePage />} />
-      <Route path="/delivery" element={<DeliveryPage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
-};
 
 const AppContent = (): JSX.Element => {
   const { filters } = useFilters();
@@ -129,18 +95,35 @@ const AppContent = (): JSX.Element => {
     setFilteredProducts(applyFilters());
   }, [filters, searchQuery, sortOrder, products]);
 
-  const handleSortClick = (order: 'asc' | 'desc') => {
-    setSortOrder(sortOrder === order ? null : order);
-  };
-
   return (
     <div className="w-full max-w-full overflow-hidden bg-gray-50">
       <div className="relative">
-        <NavSection/>
+        <NavSection />
 
         <Routes>
-          <Route path="/admin/*" element={<AdminRoutes />} />
-          <Route path="/*" element={<MainRoutes />} />
+          {/* Public routes */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/catalog" element={<CatalogPage />} />
+          <Route path="/contacts" element={<ContactsPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+          <Route path="/compare" element={<ComparePage />} />
+          <Route path="/delivery" element={<DeliveryPage />} />
+
+          {/* Admin routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="orders" element={<AdminOrdersPage />} />
+            <Route path="content" element={<AdminContent />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
+
+          {/* Fallback route */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
         <FooterSection />

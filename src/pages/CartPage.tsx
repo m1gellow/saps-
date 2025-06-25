@@ -24,7 +24,7 @@ export const CartPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-800 mb-4">Ваша корзина пуста</h1>
           <p className="text-gray-600 mb-8">Добавьте товары в корзину, чтобы совершить покупку.</p>
           <Link to="/catalog">
-            <Button className="bg-blue-4 hover:bg-teal-600 rounded-full flex items-center justify-center mx-auto gap-2">
+            <Button className="bg-blue hover:bg-blue rounded-full flex items-center justify-center mx-auto gap-2">
               <ArrowLeftIcon className="w-4 h-4" />
               Вернуться к покупкам
             </Button>
@@ -66,7 +66,7 @@ export const CartPage: React.FC = () => {
           <Link to="/catalog">
             <Button
               variant="outline"
-              className="rounded-full text-blue-4 border-blue-4 hover:bg-blue-4 hover:text-white flex items-center gap-2"
+              className="rounded-full text-blue border-blue hover:bg-blue hover:text-white flex items-center gap-2"
             >
               <ArrowLeftIcon className="w-4 h-4" />
               Продолжить покупки

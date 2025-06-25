@@ -45,34 +45,18 @@ export const InfoCard = ({ size = 'normal', title, img, description }: InfoCardP
         "overflow-hidden"
       )}>
         {img && (
-          <>
-            {/* Мобильное изображение (обрезанное) */}
+     
             <img
               src={img}
               alt={title}
               className={cn(
-                "w-full h-full object-cover md:hidden",
-                "min-h-[200px]"
-              )}
-            />
-            
-            {/* Десктопное изображение (полноразмерное) */}
-            <img
-              src={img}
-              alt={title}
-              className={cn(
-                "hidden md:block absolute inset-0 w-full h-full object-cover",
+                "hidden md:block absolute inset-0  object-cover",
                 "transition-transform duration-300 hover:scale-105",
                 size === 'small' ? "object-left" : "object-center"
               )}
             />
-          </>
+  
         )}
-        <div className={cn(
-          "absolute inset-0",
-          "bg-gradient-to-t from-white/30 to-transparent",
-          "md:bg-gradient-to-r md:from-white/50 md:to-transparent"
-        )} />
       </div>
     </div>
   );

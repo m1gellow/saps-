@@ -174,14 +174,14 @@ export const AdminContent = () => {
         <h1 className="text-2xl font-bold text-gray-800">Управление контентом</h1>
         <div className="flex gap-2">
           <Button
-            className="bg-blue-4 hover:bg-teal-600 text-white rounded-full flex items-center gap-2"
+            className="bg-blue hover:bg-blue text-white rounded-full flex items-center gap-2"
             onClick={() => handleCreateContent('text')}
           >
             <FilePlus size={16} />
             Добавить текст
           </Button>
           <Button
-            className="bg-blue-4 hover:bg-teal-600 text-white rounded-full flex items-center gap-2"
+            className="bg-blue hover:bg-blue text-white rounded-full flex items-center gap-2"
             onClick={() => handleCreateContent('slider')}
           >
             <ImageIcon size={16} />
@@ -197,7 +197,7 @@ export const AdminContent = () => {
             <button
               key={tab}
               className={`px-6 py-3 text-sm font-medium whitespace-nowrap ${
-                activeTab === tab ? 'text-blue-4 border-b-2 border-blue-4' : 'text-gray-600 hover:text-blue-4'
+                activeTab === tab ? 'text-blue border-b-2 border-blue' : 'text-gray-600 hover:text'
               }`}
               onClick={() => setActiveTab(tab)}
             >
@@ -487,7 +487,7 @@ const ContentFormModal: React.FC<ContentFormModalProps> = ({ content, onClose, o
                   name="page"
                   value={formData.page}
                   onChange={handleChange}
-                  className="w-full h-10 pl-3 pr-10 rounded-md border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-4"
+                  className="w-full h-10 pl-3 pr-10 rounded-md border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue"
                   required
                 >
                   <option value="home">Главная</option>
@@ -505,7 +505,7 @@ const ContentFormModal: React.FC<ContentFormModalProps> = ({ content, onClose, o
                 value={formData.description}
                 onChange={handleChange}
                 rows={2}
-                className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-4 focus:border-transparent"
+                className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent"
               />
             </div>
 
@@ -518,7 +518,7 @@ const ContentFormModal: React.FC<ContentFormModalProps> = ({ content, onClose, o
                   value={formData.content}
                   onChange={handleChange}
                   rows={6}
-                  className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-4 focus:border-transparent"
+                  className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent"
                   required
                 />
               </div>
@@ -657,7 +657,7 @@ const ContentFormModal: React.FC<ContentFormModalProps> = ({ content, onClose, o
             <Button type="button" variant="outline" onClick={onClose} className="border-gray-300 text-gray-700">
               Отмена
             </Button>
-            <Button type="submit" className="bg-blue-4 hover:bg-teal-600 text-white gap-1">
+            <Button type="submit" className="bg-blue hover:bg-blue text-white gap-1">
               <Save size={16} />
               Сохранить
             </Button>

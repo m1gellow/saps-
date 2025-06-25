@@ -54,7 +54,7 @@ export const AdminLayout = () => {
           <motion.div
             initial={{ opacity: sidebarOpen ? 1 : 0 }}
             animate={{ opacity: sidebarOpen ? 1 : 0 }}
-            className={`${sidebarOpen ? 'block' : 'hidden'} font-bold text-lg text-blue-4`}
+            className={`${sidebarOpen ? 'block' : 'hidden'} font-bold text-lg text-blue`}
           >
             Волны&Горы Админ
           </motion.div>
@@ -73,10 +73,12 @@ export const AdminLayout = () => {
                 <Link
                   to={item.path}
                   className={`flex items-center px-3 py-2 rounded-md transition-colors ${
-                    isActive(item.path) ? 'bg-blue-4 bg-opacity-10 text-blue-4' : 'text-gray-700 hover:bg-gray-100'
+                    isActive(item.path) ? 'bg-blue text-white' : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  <span className={`${isActive(item.path) ? 'text-blue-4' : 'text-gray-500'}`}>{item.icon}</span>
+                  {React.cloneElement(item.icon, {
+                    className: isActive(item.path) ? 'text-white' : 'text-gray-500'
+                  })}
                   <motion.span
                     initial={{ opacity: sidebarOpen ? 1 : 0, width: sidebarOpen ? 'auto' : 0 }}
                     animate={{ opacity: sidebarOpen ? 1 : 0, width: sidebarOpen ? 'auto' : 0 }}
@@ -110,7 +112,7 @@ export const AdminLayout = () => {
       {/* Мобильная версия меню */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 shadow-sm">
         <div className="flex items-center justify-between p-4">
-          <div className="font-bold text-lg text-blue-4">Волны&Горы Админ</div>
+          <div className="font-bold text-lg text-blue">Волны&Горы Админ</div>
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-1 rounded-full hover:bg-gray-200">
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -142,12 +144,14 @@ export const AdminLayout = () => {
                         to={item.path}
                         className={`flex items-center px-3 py-2 rounded-md transition-colors ${
                           isActive(item.path)
-                            ? 'bg-blue-4 bg-opacity-10 text-blue-4'
+                            ? 'bg-blue text-white'
                             : 'text-gray-700 hover:bg-gray-100'
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <span className={`${isActive(item.path) ? 'text-blue-4' : 'text-gray-500'}`}>{item.icon}</span>
+                        {React.cloneElement(item.icon, {
+                          className: isActive(item.path) ? 'text-white' : 'text-gray-500'
+                        })}
                         <span className="ml-3">{item.title}</span>
                       </Link>
                     </li>

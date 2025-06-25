@@ -19,7 +19,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Обработка клика вне поля поиска для скрытия подсказок
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
@@ -38,10 +37,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
       return;
     }
 
-    // Фильтрация продуктов по запросу с использованием нечеткого поиска
     const filtered = products
       .filter((product) => fuzzySearch(query, product.name, 2) || fuzzySearch(query, product.brand, 1))
-      .slice(0, 5); // Ограничиваем до 5 предложений
+      .slice(0, 5);
 
     setSuggestions(filtered);
     setFocusedIndex(-1);
@@ -74,7 +72,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (suggestions.length === 0) return;
 
-    // Навигация по списку предложений с помощью клавиатуры
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setFocusedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
@@ -105,7 +102,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
           <div className="relative">
             <Input
               ref={inputRef}
-              className="h-[43px] pl-11 pr-10 rounded-[50px] border border-solid border-[#0000004c] w-full focus:border-blue-4 focus:ring focus:ring-blue-4 focus:ring-opacity-50 transition-all"
+              className="h-12 pl-11 pr-10 rounded-[50px] border border-gray-200 w-full focus:border-blue focus:ring-2 focus:ring-blue focus:ring-opacity-50 transition-all"
               placeholder="Поиск по названию или бренду"
               value={query}
               onChange={handleInputChange}
@@ -113,8 +110,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
               onFocus={() => query.trim() && setShowSuggestions(true)}
               autoComplete="off"
             />
-            <div className="absolute w-[27px] h-[27px] top-[7px] left-[9px] bg-blue-4 bg-opacity-20 rounded-[13.5px] border border-solid border-blue-4 flex items-center justify-center">
-              <SearchIcon className="w-3.5 h-3.5 text-gray-700" />
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+              <SearchIcon className="w-5 h-5" />
             </div>
 
             {query && (
@@ -123,17 +120,16 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
                 onClick={clearSearch}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                <XIcon className="w-4 h-4" />
+                <XIcon className="w-5 h-5" />
               </button>
             )}
           </div>
         </form>
 
-        {/* Выпадающие подсказки */}
         <AnimatePresence>
           {showSuggestions && suggestions.length > 0 && (
             <motion.div
-              className="absolute z-20 w-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden"
+              className="absolute z-20 w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -143,17 +139,23 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, products = [] })
                 {suggestions.map((suggestion, index) => (
                   <motion.li
                     key={suggestion.id}
-                    className={`px-4 py-2 cursor-pointer transition-colors ${
+                    className={`px-4 py-3 cursor-pointer transition-colors ${
                       index !== suggestions.length - 1 ? 'border-b border-gray-100' : ''
-                    } ${index === focusedIndex ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
+                    } ${index === focusedIndex ? 'bg-gray-50' : 'hover:bg-gray-50'}`}
                     onClick={() => handleSuggestionClick(suggestion)}
-                    whileHover={{ backgroundColor: 'rgba(23, 204, 197, 0.1)' }}
+                    whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.03)' }}
                   >
-                    <div className="flex items-center">
-                      <img src={suggestion.image} alt={suggestion.name} className="w-8 h-8 object-contain mr-2" />
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-md overflow-hidden border border-gray-100">
+                        <img 
+                          src={suggestion.image} 
+                          alt={suggestion.name} 
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
                       <div>
-                        <div className="text-sm font-medium text-gray-800">{suggestion.name}</div>
-                        <div className="text-xs text-gray-500">{suggestion.brand}</div>
+                        <div className="text-sm font-semibold text-gray-900">{suggestion.name}</div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wider">{suggestion.brand}</div>
                       </div>
                     </div>
                   </motion.li>

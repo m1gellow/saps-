@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import cn from 'classnames';
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
+import { useNavigate } from 'react-router-dom';
 
 const categories = [
   { name: 'SUP', id: 1, image: '/items/Sup.png' },
@@ -24,9 +25,12 @@ const CategoryCard = ({
   setActive: (id: number) => void;
   image: string;
 }) => {
+
+  const navigate = useNavigate()
+
   return (
     <div
-      onClick={() => setActive(id)}
+      onClick={() => {navigate('/catalog'), setActive(id)}}
       className={cn(
         'bg-skyblue rounded-lg overflow-hidden',
         'h-[180px] w-[160px] sm:w-[180px] flex-shrink-0',

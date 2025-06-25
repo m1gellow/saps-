@@ -60,28 +60,28 @@ export const AdminDashboard = () => {
     {
       title: 'Новые заказы',
       value: stats.newOrdersToday.toString(),
-      icon: <ShoppingBag size={24} />,
+      icon: <ShoppingBag size={24} color='white'/>,
       change: '+17%',
       isUp: true,
     },
     {
       title: 'Выручка сегодня',
       value: `${stats.revenueToday.toLocaleString()} ₽`,
-      icon: <CreditCard size={24} />,
+      icon: <CreditCard size={24} color='black'/>,
       change: '+24%',
       isUp: true,
     },
     {
       title: 'Посетители',
       value: stats.visitors.toString(),
-      icon: <Users size={24} />,
+      icon: <Users size={24} color='white'/>,
       change: '-12%',
       isUp: false,
     },
     {
       title: 'Товаров на складе',
       value: (stats.lowStockItems.length > 0 ? 234 - stats.lowStockItems.length : 234).toString(),
-      icon: <Package size={24} />,
+      icon: <Package size={24} color='black'/>,
       change: '+4%',
       isUp: true,
     },
@@ -90,7 +90,7 @@ export const AdminDashboard = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 text-blue-4 animate-spin" />
+        <Loader2 className="h-8 w-8 text-blue animate-spin" />
       </div>
     );
   }
@@ -122,8 +122,8 @@ export const AdminDashboard = () => {
                 <p className="text-sm font-medium text-gray-600">{stat.title}</p>
                 <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
               </div>
-              <div className={`p-3 rounded-full ${index % 2 === 0 ? 'bg-blue-4 bg-opacity-10' : 'bg-gray-100'}`}>
-                <div className={index % 2 === 0 ? 'text-blue-4' : 'text-gray-700'}>{stat.icon}</div>
+              <div className={`p-3 rounded-full ${index % 2 === 0 ? 'bg-blue bg-opacity-10' : 'bg-gray-100'}`}>
+                <div className={index % 2 === 0 ? 'text-blue' : 'text-gray-700'}>{stat.icon}</div>
               </div>
             </div>
             <div className="mt-4 flex items-center">
@@ -168,7 +168,7 @@ export const AdminDashboard = () => {
                 {stats.recentOrders.length > 0 ? (
                   stats.recentOrders.map((order, index) => (
                     <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-4">{order.id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue">{order.id}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{order.customer}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.date}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -198,7 +198,7 @@ export const AdminDashboard = () => {
             </table>
           </div>
           <div className="p-4 border-t border-gray-100 text-center">
-            <button className="text-sm text-blue-4 hover:text-blue-600 font-medium">Посмотреть все заказы</button>
+            <button className="text-sm text-blue hover:text-blue-600 font-medium">Посмотреть все заказы</button>
           </div>
         </motion.div>
 
@@ -223,7 +223,7 @@ export const AdminDashboard = () => {
                       <p className="text-xs text-amber-600">Товар закончился</p>
                     </div>
                   </div>
-                  <button className="text-xs bg-blue-4 text-white px-3 py-1 rounded-full hover:bg-blue-600 transition-colors">
+                  <button className="text-xs bg-blue text-white px-3 py-1 rounded-full hover:bg-blue-600 transition-colors">
                     Пополнить
                   </button>
                 </div>
@@ -233,7 +233,7 @@ export const AdminDashboard = () => {
             )}
           </div>
           <div className="p-4 border-t border-gray-100 text-center">
-            <button className="text-sm text-blue-4 hover:text-blue-600 font-medium">Управление складом</button>
+            <button className="text-sm text-blue hover:text-blue-600 font-medium">Управление складом</button>
           </div>
         </motion.div>
       </div>
@@ -248,7 +248,7 @@ export const AdminDashboard = () => {
         <div className="flex justify-between items-center border-b border-gray-100 py-4 mb-6">
           <h2 className="text-lg font-semibold text-gray-800">Аналитика продаж</h2>
           <div className="flex space-x-2">
-            <button className="px-3 py-1 text-sm bg-blue-4 text-white rounded-md">За неделю</button>
+            <button className="px-3 py-1 text-sm bg-blue text-white rounded-md">За неделю</button>
             <button className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200">
               За месяц
             </button>

@@ -76,7 +76,7 @@ export const AdminLogin = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 py-2 rounded-md border-gray-300 focus:border-blue-4 focus:ring focus:ring-blue-4 focus:ring-opacity-50"
+                  className="pl-10 py-2 rounded-md border-gray-300 focus:border-blue focus:ring focus:ring-blue focus:ring-opacity-50"
                   placeholder="admin@example.com"
                   autoComplete="email"
                 />
@@ -96,7 +96,7 @@ export const AdminLogin = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 py-2 rounded-md border-gray-300 focus:border-blue-4 focus:ring focus:ring-blue-4 focus:ring-opacity-50"
+                  className="pl-10 py-2 rounded-md border-gray-300 focus:border-blue focus:ring focus:ring-blue focus:ring-opacity-50"
                   placeholder="••••••••"
                 />
               </div>
@@ -104,7 +104,7 @@ export const AdminLogin = () => {
 
             <Button
               type="submit"
-              className="w-full py-2 bg-blue-4 hover:bg-teal-600 text-white font-medium rounded-md transition-colors flex items-center justify-center"
+              className="w-full py-2 bg-blue hover:bg-teal-600 text-white font-medium rounded-md transition-colors flex items-center justify-center"
               disabled={isLoading}
             >
               {isLoading ? (

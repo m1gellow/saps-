@@ -188,7 +188,7 @@ export const AdminProducts = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <h1 className="text-2xl font-bold text-gray-800">Товары</h1>
         <Button
-          className="bg-blue-4 hover:bg-teal-600 text-white rounded-full flex items-center gap-2"
+          className="bg-blue hover:bg-teal-600 text-white rounded-full flex items-center gap-2"
           onClick={handleNewProduct}
         >
           <Plus size={16} />
@@ -214,7 +214,7 @@ export const AdminProducts = () => {
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
             <div className="relative">
               <select
-                className="w-full h-10 pl-3 pr-10 appearance-none rounded-md border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-4"
+                className="w-full h-10 pl-3 pr-10 appearance-none rounded-md border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
@@ -242,7 +242,7 @@ export const AdminProducts = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-x-auto">
         {isLoading ? (
           <div className="flex items-center justify-center p-8">
-            <Loader2 className="h-8 w-8 text-blue-4 animate-spin mr-2" />
+            <Loader2 className="h-8 w-8 text-blue animate-spin mr-2" />
             <span className="text-gray-600">Загрузка данных...</span>
           </div>
         ) : (
@@ -346,7 +346,7 @@ export const AdminProducts = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
                       <button
-                        className="p-1 text-blue-4 hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
+                        className="p-1 text-blue hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
                         onClick={() => handleEditProduct(product)}
                       >
                         <Edit size={16} />
@@ -418,7 +418,7 @@ export const AdminProducts = () => {
                       onClick={() => handlePageChange(index + 1)}
                       className={`relative inline-flex items-center px-4 py-2 border ${
                         currentPage === index + 1
-                          ? 'z-10 bg-blue-4 text-white border-blue-4 hover:bg-blue-500'
+                          ? 'z-10 bg-blue text-white border-blue hover:bg-blue-500'
                           : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
                       } text-sm font-medium`}
                     >
@@ -658,7 +658,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
                 onChange={handleChange}
                 className={`w-full rounded-md border ${
                   errors.category ? 'border-red-300' : 'border-gray-300'
-                } py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-4 focus:border-transparent`}
+                } py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent`}
               >
                 <option value="">Выберите категорию</option>
                 {categories.map((category) => (
@@ -677,7 +677,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
                   name="inStock"
                   checked={formData.inStock}
                   onChange={handleChange}
-                  className="h-4 w-4 text-blue-4 rounded border-gray-300 focus:ring-blue-4"
+                  className="h-4 w-4 text-blue rounded border-gray-300 focus:ring-blue"
                 />
                 <span className="ml-2 text-sm text-gray-700">В наличии</span>
               </label>
@@ -690,7 +690,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
                 value={formData.description || ''}
                 onChange={handleChange}
                 rows={4}
-                className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-4 focus:border-transparent"
+                className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent"
                 placeholder="Введите описание товара..."
               ></textarea>
             </div>
@@ -708,7 +708,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
             </Button>
             <Button
               type="submit"
-              className="bg-blue-4 hover:bg-teal-600 text-white flex items-center space-x-2"
+              className="bg-blue hover:bg-teal-600 text-white flex items-center space-x-2"
               disabled={isLoading}
             >
               {isLoading ? (
