@@ -59,7 +59,7 @@ const NewProductCard = ({ product, isLarge = false }: NewProductCardProps) => {
       <div
         className={`w-full ${isLarge ? 'max-w-none h-full' : 'max-w-[320px]'} bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col`}
       >
-        <div className="p-0 flex flex-col h-full">
+        <div className="p-0 flex flex-col gap-[20px] h-full">
           {/* Изображение товара с кнопкой избранного */}
           <div className="relative aspect-square">
             <Link to={`/product/${currentProduct.id}`} className="block h-full">

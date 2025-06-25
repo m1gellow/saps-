@@ -26,7 +26,7 @@ export const NavSection = (): JSX.Element => {
   return (
     <div className="text-white m-[20px] relative">
       <div className="bg-skyblue border-[2px] border-blue rounded-t-[8px]">
-        <div className="container flex justify-between items-center gap-[42.5px]">
+        <div className="container flex justify-center md:justify-between items-center gap-[42.5px]">
           <div className="flex items-center gap-[40px]">
             <Link to="/" className="flex items-center">
               <img alt="Logo" src={'/Logo.png'} className="max-w-[60px] max-h-[80px]" />
@@ -95,7 +95,7 @@ export const NavSection = (): JSX.Element => {
             </Link>
           </div>
 
-          <button onClick={toggleMenu} className="md:hidden">
+          <button onClick={toggleMenu} className="md:hidden ">
             {isMenuOpen ? <X color="#333333" size={24} /> : <Menu color="#333333" size={24} />}
           </button>
         </div>
