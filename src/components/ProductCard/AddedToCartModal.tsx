@@ -43,19 +43,12 @@ export const AddedToCartModal: React.FC<AddedToCartModalProps> = memo(({ product
   }, [updateQuantity, product.id]);
 
   return (
-    <motion.div
+    <div
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
       onClick={onClose}
     >
-      <motion.div
+      <div
         className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        transition={{ type: 'spring', damping: 25 }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
@@ -111,7 +104,7 @@ export const AddedToCartModal: React.FC<AddedToCartModalProps> = memo(({ product
             </Button>
 
             <Link to="/cart" className="w-full sm:w-auto">
-              <Button className="w-full bg-blue-4 hover:bg-teal-600 text-white rounded-full px-6" onClick={onClose}>
+              <Button className="w-full bg-blue text-white rounded-full px-6" onClick={onClose}>
                 Перейти в корзину
               </Button>
             </Link>
@@ -154,8 +147,8 @@ export const AddedToCartModal: React.FC<AddedToCartModalProps> = memo(({ product
             </div>
           )}
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 });
 

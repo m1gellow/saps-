@@ -17,7 +17,7 @@ export const InfoCard = ({ size = 'normal', title, img, description, badgeDate }
         'relative bg-skyblue rounded-xl overflow-hidden',
         'flex flex-col',
         size === 'small' ? 'min-h-[260px]' : 'min-h-[400px]',
-        'md:flex-row md:h-full',
+        'md:flex-row md:h-full'
       )}
     >
       {/* Текстовый контент */}
@@ -25,26 +25,34 @@ export const InfoCard = ({ size = 'normal', title, img, description, badgeDate }
         className={cn(
           'relative z-10 p-5 md:p-8 flex flex-col justify-between',
           'md:w-1/2',
-          size === 'small' ? 'md:min-h-[260px]' : 'md:min-h-[560px]',
+          size === 'small' ? 'md:min-h-[260px]' : 'md:min-h-[560px]'
         )}
       >
         <div className='flex flex-col gap-[20px]'>
           {badgeDate && (
-            <button className="bg-blue  font-bold text-white w-max gap-[10px] p-[5px] rounded-[8px]">{badgeDate}</button>
+            <button className="bg-blue font-bold text-white w-max gap-[10px] p-[5px] rounded-[8px]">
+              {badgeDate}
+            </button>
           )}
 
-          <h1 className="font-bold text-blue text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-3 md:mb-4">{title}</h1>
-          {description && <p className="font-medium text-gray-800 text-base sm:text-lg md:text-xl">{description}</p>}
+          <h1 className="font-bold text-blue text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-3 md:mb-4">
+            {title}
+          </h1>
+          {description && (
+            <p className="font-medium text-gray-800 text-base sm:text-lg md:text-xl">
+              {description}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Изображение */}
+      {/* Изображение - переработанный блок */}
       <div
         className={cn(
-          'relative',
-          'flex-1', // Занимает оставшееся пространство
+          'relative flex-1',
           'min-h-[200px] md:min-h-0',
-          'overflow-hidden',
+          'flex items-center justify-center', // Центрируем изображение
+          'bg-gray-100' // Фон на случай если изображение не загрузится
         )}
       >
         {img && (
@@ -52,9 +60,10 @@ export const InfoCard = ({ size = 'normal', title, img, description, badgeDate }
             src={img}
             alt={title}
             className={cn(
-              'hidden md:block absolute inset-0  object-cover',
+              'w-full h-full object-contain', // Используем object-contain вместо object-cover
+              'md:absolute md:inset-0', // Абсолютное позиционирование только на десктопе
               'transition-transform duration-300 hover:scale-105',
-              size === 'small' ? 'object-left' : 'object-center',
+              size === 'small' ? 'md:object-left' : 'md:object-center'
             )}
           />
         )}

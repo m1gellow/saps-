@@ -84,99 +84,160 @@ export const AdminUsers = () => {
   };
 
   // Handle editing a user
-  const handleEditUser = (user) => {
+ const handleEditUser = async (user) => {
+  try {
+    setIsLoading(true);
+    
+    // Получаем актуальные данные пользователя перед редактированием
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    if (error) throw error;
+    if (!data) throw new Error('Пользователь не найден');
+
     setSelectedUser({
-      ...user,
+      ...data,
       password: '',
       confirmPassword: '',
     });
     setIsUserModalOpen(true);
-  };
+  } catch (error) {
+    console.error('Ошибка при загрузке данных пользователя:', error);
+    setError('Не удалось загрузить данные пользователя для редактирования');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Handle deleting a user
-  const handleDeleteUser = (user) => {
-    setSelectedUser(user);
-    setIsDeleteModalOpen(true);
-  };
+const handleDeleteUser = async (user) => {
+  try {
+    setIsLoading(true);
+    const { error } = await supabase.from('user_profiles').delete().eq('id', user.id);
+    
+    if (error) {
+      throw error;
+    }
+    
+    // Обновляем состояние, используя id пользователя из параметра функции
+    setUsers(users.filter(u => u.id !== user.id));
+  } catch (error) {
+    console.error('Ошибка при удалении пользователя:', error);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Confirm user deletion
-  const confirmDeleteUser = async () => {
-    setIsLoading(true);
+  // const confirmDeleteUser = async () => {
+  //   setIsLoading(true);
 
-    try {
-      // В реальном приложении здесь был бы API-запрос для удаления пользователя
-      // Мы просто обновляем локальное состояние
-      setUsers(users.filter((user) => user.id !== selectedUser.id));
-      setIsDeleteModalOpen(false);
-    } catch (error) {
-      console.error('Ошибка при удалении пользователя:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //   try {
+  //     console.log(selectedUser.id)
+  //     setUsers(users.filter((user) => user.id !== selectedUser.id));
+  //     setIsDeleteModalOpen(false);
+  //   } catch (error) {
+  //     console.error('Ошибка при удалении пользователя:', error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   // Save user data
   const handleSaveUser = async (userData) => {
-    setIsLoading(true);
+  setIsLoading(true);
 
-    try {
-      if (userData.id) {
-        // Update existing user - в реальном приложении здесь был бы API-запрос
-        setUsers(users.map((user) => (user.id === userData.id ? { ...userData, lastLogin: user.lastLogin } : user)));
-      } else {
-        // Create new user - в реальном приложении здесь был бы API-запрос
-        // Для прототипа добавим нового пользователя с имитацией ID и даты создания
-        const { data, error } = await supabase.auth.signUp({
+  try {
+    if (userData.id) {
+      // Обновление существующего пользователя
+      const { error: updateError } = await supabase
+        .from('user_profiles')
+        .update({
+          name: userData.name,
           email: userData.email,
-          password: userData.password,
-        });
+          role: userData.role,
+          status: userData.status,
+        })
+        .eq('id', userData.id);
 
-        if (error) throw error;
+      if (updateError) throw updateError;
 
-        if (data.user) {
-          const newUser = {
-            ...userData,
-            id: data.user.id,
-            lastLogin: new Date().toISOString(),
-          };
+      // Если пользователь администратор/менеджер - обновляем в таблице admins
+      if (userData.role === 'admin' || userData.role === 'manager') {
+        const { error: adminError } = await supabase
+          .from('admins')
+          .upsert({
+            id: userData.id,
+            username: userData.email.split('@')[0],
+            name: userData.name,
+            role: userData.role,
+          });
 
-          // Создаем запись в таблице user_profiles для нового пользователя
-          const { error: profileError } = await supabase.from('user_profiles').insert({
+        if (adminError) console.error('Ошибка обновления администратора:', adminError);
+      }
+
+      // Обновляем состояние
+      setUsers(users.map(user => 
+        user.id === userData.id ? { ...user, ...userData } : user
+      ));
+    } else {
+      // Создание нового пользователя (осталось без изменений)
+      const { data, error } = await supabase.auth.signUp({
+        email: userData.email,
+        password: userData.password,
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        const newUser = {
+          ...userData,
+          id: data.user.id,
+          lastLogin: new Date().toISOString(),
+        };
+
+        // Создаем запись в таблице user_profiles
+        const { error: profileError } = await supabase
+          .from('user_profiles')
+          .insert({
             id: data.user.id,
             email: userData.email,
             name: userData.name,
+            role: userData.role,
+            status: userData.status,
           });
 
-          if (profileError) {
-            console.error('Ошибка при создании профиля пользователя:', profileError);
-          }
+        if (profileError) throw profileError;
 
-          // Если пользователь администратор или менеджер, добавляем его в таблицу admins
-          if (userData.role === 'admin' || userData.role === 'manager') {
-            const { error: adminError } = await supabase.from('admins').insert({
+        // Добавляем в admins если нужно
+        if (userData.role === 'admin' || userData.role === 'manager') {
+          const { error: adminError } = await supabase
+            .from('admins')
+            .insert({
               id: data.user.id,
-              username: userData.email.split('@')[0], // Простой способ создать имя пользователя
+              username: userData.email.split('@')[0],
               name: userData.name,
               role: userData.role,
             });
 
-            if (adminError) {
-              console.error('Ошибка при добавлении пользователя в администраторы:', adminError);
-            }
-          }
-
-          // Добавляем пользователя в наш список
-          setUsers([...users, newUser]);
+          if (adminError) console.error('Ошибка добавления администратора:', adminError);
         }
-      }
 
-      setIsUserModalOpen(false);
-    } catch (error) {
-      console.error('Ошибка при сохранении пользователя:', error);
-    } finally {
-      setIsLoading(false);
+        setUsers([...users, newUser]);
+      }
     }
-  };
+
+    setIsUserModalOpen(false);
+  } catch (error) {
+    console.error('Ошибка при сохранении пользователя:', error);
+    setError('Не удалось сохранить пользователя. Пожалуйста, попробуйте позже.');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Format date
   const formatDate = (dateString) => {
@@ -459,7 +520,7 @@ export const AdminUsers = () => {
               </Button>
               <Button
                 className="bg-red-500 hover:bg-red-600 text-white flex items-center space-x-2"
-                onClick={confirmDeleteUser}
+                onClick={() => confirmDeleteUser(user)}
                 disabled={isLoading}
               >
                 {isLoading ? (

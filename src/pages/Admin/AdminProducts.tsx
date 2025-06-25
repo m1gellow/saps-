@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Plus, Edit, Trash2, Filter, ChevronDown, Check, X, Image, Loader2 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { getAllProducts, getAllCategories, createProduct, updateProduct, deleteProduct } from '../../lib/api/products';
 import { Product } from '../../lib/types';
+import { supabase } from '../../lib/supabase';
+
+// Инициализация Supabase клиента
 
 export const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -21,16 +24,12 @@ export const AdminProducts = () => {
 
   const productsPerPage = 10;
 
-  // Загрузка товаров и категорий при монтировании компонента
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Загружаем товары
         const productsData = await getAllProducts();
         setProducts(productsData);
-
-        // Загружаем категории
         const categoriesData = await getAllCategories();
         setCategories(categoriesData);
       } catch (error) {
@@ -43,11 +42,9 @@ export const AdminProducts = () => {
     fetchData();
   }, []);
 
-  // Filter products based on search and category
   useEffect(() => {
     let filtered = [...products];
 
-    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(
         (product) =>
@@ -57,12 +54,10 @@ export const AdminProducts = () => {
       );
     }
 
-    // Filter by category
     if (selectedCategory !== 'all') {
       filtered = filtered.filter((product) => product.category === selectedCategory);
     }
 
-    // Sort products
     filtered.sort((a, b) => {
       const fieldA = sortBy.field === 'price' ? a.priceValue : a[sortBy.field as keyof Product];
       const fieldB = sortBy.field === 'price' ? b.priceValue : b[sortBy.field as keyof Product];
@@ -78,13 +73,11 @@ export const AdminProducts = () => {
     setCurrentPage(1);
   }, [searchTerm, selectedCategory, products, sortBy]);
 
-  // Get current products
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-  // Edit or create product
   const handleEditProduct = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
@@ -97,8 +90,7 @@ export const AdminProducts = () => {
       brand: '',
       price: '',
       priceValue: 0,
-      image: '/1-201-11.png',
-      favoriteIcon: '/group-213.png',
+      image: '',
       category: '',
       inStock: true,
     });
@@ -144,11 +136,8 @@ export const AdminProducts = () => {
 
     try {
       if (formData.id) {
-        // Обновляем существующий товар
         const { success, error } = await updateProduct(formData.id, formData);
-
         if (success) {
-          // Обновляем список товаров
           const updatedProducts = await getAllProducts();
           setProducts(updatedProducts);
         } else {
@@ -156,11 +145,8 @@ export const AdminProducts = () => {
           alert('Ошибка при обновлении товара. Пожалуйста, попробуйте снова.');
         }
       } else {
-        // Добавляем новый товар
         const { data, error } = await createProduct(formData);
-
         if (data) {
-          // Обновляем список товаров
           const updatedProducts = await getAllProducts();
           setProducts(updatedProducts);
         } else {
@@ -188,7 +174,7 @@ export const AdminProducts = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <h1 className="text-2xl font-bold text-gray-800">Товары</h1>
         <Button
-          className="bg-blue hover:bg-teal-600 text-white rounded-full flex items-center gap-2"
+          className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 px-4 py-2"
           onClick={handleNewProduct}
         >
           <Plus size={16} />
@@ -196,8 +182,7 @@ export const AdminProducts = () => {
         </Button>
       </div>
 
-      {/* Фильтры и поиск */}
-      <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+      <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -214,7 +199,7 @@ export const AdminProducts = () => {
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
             <div className="relative">
               <select
-                className="w-full h-10 pl-3 pr-10 appearance-none rounded-md border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue"
+                className="w-full h-10 pl-3 pr-10 appearance-none rounded-md border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
@@ -238,11 +223,10 @@ export const AdminProducts = () => {
         </div>
       </div>
 
-      {/* Таблица товаров */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-x-auto">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-x-auto">
         {isLoading ? (
           <div className="flex items-center justify-center p-8">
-            <Loader2 className="h-8 w-8 text-blue animate-spin mr-2" />
+            <Loader2 className="h-8 w-8 text-blue-600 animate-spin mr-2" />
             <span className="text-gray-600">Загрузка данных...</span>
           </div>
         ) : (
@@ -259,10 +243,7 @@ export const AdminProducts = () => {
                     {sortBy.field === 'id' && <span>{sortBy.direction === 'asc' ? '↑' : '↓'}</span>}
                   </div>
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Изображение
                 </th>
                 <th
@@ -295,22 +276,13 @@ export const AdminProducts = () => {
                     {sortBy.field === 'price' && <span>{sortBy.direction === 'asc' ? '↑' : '↓'}</span>}
                   </div>
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Категория
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Статус
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Действия
                 </th>
               </tr>
@@ -346,7 +318,7 @@ export const AdminProducts = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
                       <button
-                        className="p-1 text-blue hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50"
+                        className="p-1 text-blue-600 hover:text-blue-800 transition-colors rounded-full hover:bg-blue-50"
                         onClick={() => handleEditProduct(product)}
                       >
                         <Edit size={16} />
@@ -373,7 +345,6 @@ export const AdminProducts = () => {
           </table>
         )}
 
-        {/* Пагинация */}
         {filteredProducts.length > 0 && (
           <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
             <div className="flex-1 flex justify-between sm:hidden">
@@ -418,7 +389,7 @@ export const AdminProducts = () => {
                       onClick={() => handlePageChange(index + 1)}
                       className={`relative inline-flex items-center px-4 py-2 border ${
                         currentPage === index + 1
-                          ? 'z-10 bg-blue text-white border-blue hover:bg-blue-500'
+                          ? 'z-10 bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
                           : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
                       } text-sm font-medium`}
                     >
@@ -441,7 +412,6 @@ export const AdminProducts = () => {
         )}
       </div>
 
-      {/* Модальное окно редактирования */}
       {isModalOpen && selectedProduct && (
         <ProductFormModal
           product={selectedProduct}
@@ -452,7 +422,6 @@ export const AdminProducts = () => {
         />
       )}
 
-      {/* Модальное окно подтверждения удаления */}
       {isDeleteModalOpen && selectedProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <motion.div
@@ -496,7 +465,6 @@ export const AdminProducts = () => {
   );
 };
 
-// Компонент модального окна для формы товара
 interface ProductFormModalProps {
   product: Product;
   categories: any[];
@@ -508,15 +476,68 @@ interface ProductFormModalProps {
 const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories, onClose, onSave, isLoading }) => {
   const [formData, setFormData] = useState<Product>(product);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [file, setFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      
+      // Проверка типа файла
+      const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!ALLOWED_TYPES.includes(selectedFile.type)) {
+        alert('Недопустимый тип файла. Разрешены только JPG, PNG и GIF.');
+        return;
+      }
+
+      // Проверка размера файла (макс. 5MB)
+      const MAX_FILE_SIZE = 5 * 1024 * 1024;
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        alert('Файл слишком большой. Максимальный размер 5MB.');
+        return;
+      }
+
+      setFile(selectedFile);
+      
+      // Превью изображения
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setFormData({
+            ...formData,
+            image: event.target.result as string
+          });
+        }
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+
+  const uploadImage = async (file: File): Promise<string> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('item-image')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('item-image')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
 
     if (name === 'price') {
-      // Только числа, пробелы и буквы Р, р, P, p
       const sanitizedValue = value.replace(/[^0-9\s\u0420\u0440Pp.]/g, '');
-
-      // Извлекаем числовое значение для priceValue
       const priceValue = parseFloat(sanitizedValue.replace(/[^\d.]/g, '')) || 0;
 
       setFormData({
@@ -560,11 +581,38 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      onSave(formData);
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      let imageUrl = formData.image;
+
+      // Если выбрано новое изображение, загружаем его
+      if (file) {
+        try {
+          imageUrl = await uploadImage(file);
+        } catch (error) {
+          console.error('Ошибка загрузки изображения:', error);
+          alert('Не удалось загрузить изображение. Пожалуйста, попробуйте снова.');
+          return;
+        }
+      }
+
+      // Сохраняем товар с обновленным URL изображения
+      const productToSave = {
+        ...formData,
+        image: imageUrl
+      };
+
+      onSave(productToSave);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -580,7 +628,11 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
           <h2 className="text-xl font-semibold text-gray-800">
             {product.id ? 'Редактирование товара' : 'Добавление товара'}
           </h2>
-          <button className="p-1 rounded-full hover:bg-gray-100 text-gray-500" onClick={onClose} disabled={isLoading}>
+          <button 
+            className="p-1 rounded-full hover:bg-gray-100 text-gray-500" 
+            onClick={onClose} 
+            disabled={isLoading || isUploading}
+          >
             <X size={20} />
           </button>
         </div>
@@ -592,22 +644,36 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
               <div className="flex items-center">
                 <div className="mr-4 h-24 w-24 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden border border-gray-200">
                   {formData.image ? (
-                    <img src={formData.image} alt={formData.name} className="h-full w-full object-contain" />
+                    <img 
+                      src={formData.image.startsWith('data:') ? formData.image : `${formData.image}?${Date.now()}`} 
+                      alt={formData.name} 
+                      className="h-full w-full object-contain" 
+                    />
                   ) : (
                     <Image size={32} className="text-gray-400" />
                   )}
                 </div>
-                <div>
-                  <Input
-                    type="text"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleChange}
-                    placeholder="URL изображения"
-                    className="mb-2"
-                  />
-                  <p className="text-xs text-gray-500">
-                    Введите URL изображения или загрузите файл (функция будет доступна в следующем обновлении)
+                <div className="flex-1">
+                  <div className="relative">
+                    <input
+                      type="file"
+                      id="product-image"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      disabled={isUploading}
+                    />
+                    <label 
+                      htmlFor="product-image" 
+                      className={`block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                        isUploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                      }`}
+                    >
+                      Выбрать файл
+                    </label>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    {file ? file.name : 'JPG, PNG или GIF. Макс. размер 5MB.'}
                   </p>
                 </div>
               </div>
@@ -658,7 +724,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
                 onChange={handleChange}
                 className={`w-full rounded-md border ${
                   errors.category ? 'border-red-300' : 'border-gray-300'
-                } py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent`}
+                } py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               >
                 <option value="">Выберите категорию</option>
                 {categories.map((category) => (
@@ -677,7 +743,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
                   name="inStock"
                   checked={formData.inStock}
                   onChange={handleChange}
-                  className="h-4 w-4 text-blue rounded border-gray-300 focus:ring-blue"
+                  className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                 />
                 <span className="ml-2 text-sm text-gray-700">В наличии</span>
               </label>
@@ -690,7 +756,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
                 value={formData.description || ''}
                 onChange={handleChange}
                 rows={4}
-                className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent"
+                className="w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Введите описание товара..."
               ></textarea>
             </div>
@@ -702,19 +768,19 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
               variant="outline"
               onClick={onClose}
               className="border-gray-300 text-gray-700"
-              disabled={isLoading}
+              disabled={isLoading || isUploading}
             >
               Отмена
             </Button>
             <Button
               type="submit"
-              className="bg-blue hover:bg-teal-600 text-white flex items-center space-x-2"
-              disabled={isLoading}
+              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2"
+              disabled={isLoading || isUploading}
             >
-              {isLoading ? (
+              {(isLoading || isUploading) ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Сохранение...</span>
+                  <span>{isUploading ? 'Загрузка...' : 'Сохранение...'}</span>
                 </>
               ) : (
                 <span>Сохранить</span>

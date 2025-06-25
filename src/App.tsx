@@ -28,7 +28,7 @@ import { AdminLogin } from './pages/Admin/AdminLogin';
 import { AdminDashboard } from './pages/Admin/AdminDashboard';
 import { AdminProducts } from './pages/Admin/AdminProducts';
 import { AdminOrdersPage } from './pages/Admin/Orders';
-import { AdminContent } from './pages/Admin/AdminContent';
+// import { AdminContent } from './pages/Admin/AdminContent';
 import { AdminUsers } from './pages/Admin/AdminUsers';
 import { AdminSettings } from './pages/Admin/AdminSettings';
 
@@ -117,7 +117,7 @@ const AppContent = (): JSX.Element => {
             <Route index element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />
             <Route path="orders" element={<AdminOrdersPage />} />
-            <Route path="content" element={<AdminContent />} />
+            {/* <Route path="content" element={<AdminContent />} /> */}
             <Route path="users" element={<AdminUsers />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>

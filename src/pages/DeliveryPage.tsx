@@ -6,9 +6,10 @@ import { Textarea } from '../components/ui/textarea';
 import { CheckIcon, ChevronDownIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../lib/context/CartContext';
+import { supabase } from '../lib/supabase';
 
 const DeliveryPage = () => {
-  const { totalPrice } = useCart();
+    const {clearCart, totalPrice, cartItems } = useCart();
   const navigate = useNavigate();
 
   // State for form inputs
@@ -33,12 +34,57 @@ const DeliveryPage = () => {
   const [cvv, setCvv] = useState('');
 
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Process order
-    alert('Заказ успешно оформлен!');
-    navigate('/');
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  try {
+    // 1. Создаем объект заказа с данными из формы
+    const newOrder = {
+      total_amount: totalPrice, // Используем totalPrice вместо totalItems
+      status: "active",
+      customer_name: name,
+      customer_email: email,
+      customer_phone: phone,
+      delivery_address: `${city}, ${region}, ${address}, ${zipCode}`, // Объединяем адресные данные
+      payment_method: paymentMethod,
+      notes: additionalInfo
+    };
+
+    // 2. Вставляем заказ в таблицу orders
+    const { data: orderData, error: orderError } = await supabase
+      .from('orders')
+      .insert(newOrder)
+      .select()
+      .single();
+
+    if (orderError) throw orderError;
+
+    // 3. Получаем товары из корзины (используем деструктуризацию из контекста
+
+    // 4. Создаем записи о товарах заказа
+    const orderItems = cartItems.map(item => ({
+      order_id: 12,
+      product_id: 12,
+      quantity: 2,
+      price: 144444
+    }));
+
+    const { error: itemsError } = await supabase
+      .from('order_items')
+      .insert(orderItems);
+
+    if (itemsError) throw itemsError;
+
+    clearCart();
+
+    // 6. Перенаправляем на страницу подтверждения
+    navigate(``);
+
+  } catch (error) {
+    console.error('Ошибка при создании заказа:', error);
+    alert('Произошла ошибка при оформлении заказа. Пожалуйста, попробуйте снова.');
+  }
+};
 
   // Format card number with spaces
   const formatCardNumber = (value) => {

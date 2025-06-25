@@ -16,6 +16,8 @@ export type Product = {
 export type CartItem = {
   product: Product;
   quantity: number;
+  id: number;
+  price: number;
 };
 
 export type BrandFilter = {

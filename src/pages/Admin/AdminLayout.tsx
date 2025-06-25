@@ -25,7 +25,7 @@ export const AdminLayout = () => {
     { icon: <LayoutDashboard size={20} />, title: 'Дашборд', path: '/admin' },
     { icon: <Package size={20} />, title: 'Товары', path: '/admin/products' },
     { icon: <ShoppingCart size={20} />, title: 'Заказы', path: '/admin/orders' },
-    { icon: <FileText size={20} />, title: 'Контент', path: '/admin/content' },
+    // { icon: <FileText size={20} />, title: 'Контент', path: '/admin/content' },
     { icon: <Users size={20} />, title: 'Пользователи', path: '/admin/users' },
     { icon: <Settings size={20} />, title: 'Настройки', path: '/admin/settings' },
   ];
