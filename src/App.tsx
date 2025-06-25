@@ -31,6 +31,7 @@ import { AdminOrdersPage } from './pages/Admin/Orders';
 // import { AdminContent } from './pages/Admin/AdminContent';
 import { AdminUsers } from './pages/Admin/AdminUsers';
 import { AdminSettings } from './pages/Admin/AdminSettings';
+import { OrderSuccess } from './pages/OrderSucess';
 
 const AppContent = (): JSX.Element => {
   const { filters } = useFilters();
@@ -110,6 +111,7 @@ const AppContent = (): JSX.Element => {
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/delivery" element={<DeliveryPage />} />
+          <Route path="/order-sucess" element={<OrderSuccess />} />
 
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />

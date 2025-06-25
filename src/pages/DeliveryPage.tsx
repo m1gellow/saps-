@@ -64,7 +64,7 @@ const DeliveryPage = () => {
     // 4. Создаем записи о товарах заказа
     const orderItems = cartItems.map(item => ({
       order_id: 12,
-      product_id: 12,
+      product_id: 67,
       quantity: 2,
       price: 144444
     }));
@@ -78,7 +78,7 @@ const DeliveryPage = () => {
     clearCart();
 
     // 6. Перенаправляем на страницу подтверждения
-    navigate(``);
+    navigate(`/order-sucess`);
 
   } catch (error) {
     console.error('Ошибка при создании заказа:', error);

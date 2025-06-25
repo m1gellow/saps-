@@ -174,7 +174,7 @@ export const AdminProducts = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <h1 className="text-2xl font-bold text-gray-800">Товары</h1>
         <Button
-          className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 px-4 py-2"
+          className="bg-blue text-white rounded-lg flex items-center gap-2 px-4 py-2"
           onClick={handleNewProduct}
         >
           <Plus size={16} />
@@ -774,7 +774,7 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories
             </Button>
             <Button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2"
+              className="bg-blue  text-white flex items-center space-x-2"
               disabled={isLoading || isUploading}
             >
               {(isLoading || isUploading) ? (
