@@ -59,7 +59,7 @@ export const ProductPage: React.FC = () => {
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Товар не найден</h2>
         <p className="text-gray-600 mb-6">Извините, запрашиваемый товар не существует или был удален.</p>
         <Link to="/catalog">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg">
+          <Button className="bg-blue text-white px-6 py-3 rounded-lg">
             Вернуться в каталог
           </Button>
         </Link>

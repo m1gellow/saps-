@@ -62,7 +62,7 @@ const NewProductCard = ({ product, isLarge = false }: NewProductCardProps) => {
         <div className="p-0 flex flex-col gap-[20px] h-full">
           {/* Изображение товара с кнопкой избранного */}
           <div className="relative aspect-square">
-            <Link to={`/product/${currentProduct.id}`} className="block h-full">
+            <Link to={`/product/67`} className="block h-full">
               <ProductImage 
                 src={currentProduct.image} 
                 alt={currentProduct.name}
@@ -131,7 +131,7 @@ const NewProductCard = ({ product, isLarge = false }: NewProductCardProps) => {
                 </motion.div>
                 
                 <div className="flex-1">
-                  <Link to={`/product/${currentProduct.id}`} className="block w-full">
+                  <Link to={`/product/67`} className="block w-full">
                     <Button
                       variant="outline"
                       className="w-full px-2 h-12 rounded-lg border-gray-300 hover:bg-gray-50 transition-colors"
