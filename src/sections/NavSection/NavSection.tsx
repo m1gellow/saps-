@@ -2,13 +2,25 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../../lib/context/CartContext';
 import { Grid2x2Plus, Menu, ShoppingBag, UserRound, X } from 'lucide-react';
 import { useState } from 'react';
+import cn from 'classnames';
 
 export const NavSection = (): JSX.Element => {
   const { totalPrice } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const copyToClipBoard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -65,13 +77,14 @@ export const NavSection = (): JSX.Element => {
                 <Link to={'/cart'}>Корзина</Link>
               </li>
               <li>
-                <Link to={'/'}>+7 961 775 7144</Link>
+                <button className={cn(`${isCopied && 'text-blue'}`)} onClick={() => copyToClipBoard('+7 961 775 7144')}>
+                  {isCopied ? 'Copied!' : '+7 961 775 7144 '}
+                </button>
               </li>
             </ul>
           </div>
 
           <div className="md:flex hidden items-center justify-center gap-[20px]">
-
             <Link to={'/cart'}>
               <div className="gap-[8px] flex items-center">
                 <ShoppingBag color="#333333" />
@@ -81,7 +94,7 @@ export const NavSection = (): JSX.Element => {
               </div>
             </Link>
           </div>
-          
+
           <button onClick={toggleMenu} className="md:hidden">
             {isMenuOpen ? <X color="#333333" size={24} /> : <Menu color="#333333" size={24} />}
           </button>
@@ -91,28 +104,27 @@ export const NavSection = (): JSX.Element => {
       {/* Мобильное меню */}
       {isMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white z-50 shadow-lg rounded-b-lg border border-blue">
-          <ul className="py-4 px-6 space-y-4">
+          <ul className="py-4 px-6 space-y-4  text-[#333333] font-bold ">
             <li>
-              <Link to={'/'} className="block text-[#333333] font-bold py-2" onClick={toggleMenu}>
+              <Link to={'/'} onClick={toggleMenu}>
                 Главная
               </Link>
             </li>
             <li>
-              <Link to={'/contacts'} className="block text-[#333333] font-bold py-2" onClick={toggleMenu}>
+              <Link to={'/contacts'}  onClick={toggleMenu}>
                 Контакты
               </Link>
             </li>
             <li>
-              <Link to={'/cart'} className="block text-[#333333] font-bold py-2" onClick={toggleMenu}>
+              <Link to={'/cart'} onClick={toggleMenu}>
                 Корзина
               </Link>
             </li>
             <li>
-              <Link to={'/'} className="block text-[#333333] font-bold py-2" onClick={toggleMenu}>
-                +7 961 775 7144
-              </Link>
+              <button className={cn(`${isCopied && 'text-blue'}`)} onClick={() => copyToClipBoard('+7 961 775 7144')}>
+                {isCopied ? 'Copied!' : '+7 961 775 7144 '}
+              </button>
             </li>
-          
           </ul>
         </div>
       )}

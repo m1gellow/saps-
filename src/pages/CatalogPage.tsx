@@ -128,11 +128,11 @@ export const CatalogPage: React.FC = () => {
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Каталог товаров</h1>
 
       <SearchBar onSearch={handleSearch} products={allProducts} />
-      <SortOptions handleSortClick={handleSortClick} sortOrder={sortOrder} />
+      {/* <SortOptions handleSortClick={handleSortClick} sortOrder={sortOrder} /> */}
 
       <div className="flex flex-col lg:flex-row w-full gap-4 lg:gap-8 mt-2">
         {/* Filter sidebar */}
-        {showMobileFilter && (
+        {/* {showMobileFilter && (
           <FilterSideBar
             filters={filters}
             toggleBrandFilter={toggleBrandFilter}
@@ -140,7 +140,7 @@ export const CatalogPage: React.FC = () => {
             resetFilters={resetFilters}
             getFilteredPrice={getFilteredPrice}
           />
-        )}
+        )} */}
 
         {/* Product grid */}
         <div className="flex-1">
@@ -202,7 +202,7 @@ export const CatalogPage: React.FC = () => {
       </div>
 
       {/* Pagination */}
-      <Pagination filteredProducts={filteredProducts} />
+      {/* <Pagination filteredProducts={filteredProducts} /> */}
 
       {/* Рекомендуемые товары в конце страницы */}
       {filteredProducts.length > 0 && !isLoading && allProducts.length > 10 && (

@@ -16,7 +16,8 @@ export const StockSection = () => {
       <InfoCard
         title="На природу с комфортом и драйвом!"
         description="SUP-доски для озёр, рек и моря — выбери свою!"
-        img={'/items/Sup.png'}
+        img={'/Suit.png'}
+        badgeDate='25 мая'
       />
       <div className="flex flex-col gap-5 sm:gap-6 md:gap-8">
         <InfoCard
