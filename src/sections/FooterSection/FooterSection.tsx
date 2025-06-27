@@ -1,136 +1,199 @@
-import { MailIcon, MapPinIcon, PhoneIcon, SendIcon } from 'lucide-react';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Checkbox } from '../../components/ui/checkbox';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useCart } from '../../lib/context/CartContext';
+import { useState } from 'react';
+import cn from 'classnames';
 
 export const FooterSection = (): JSX.Element => {
-  // Navigation links data
-  const navLinks = [
-    { title: 'Главная', href: '/' },
-    { title: 'Каталог', href: '/catalog' },
-    { title: 'Контакты', href: '/contacts' },
-    { title: 'Корзина', href: '/cart' },
-  ];
+  const { totalPrice } = useCart();
+  const [isCopied, setIsCopied] = useState(false);
 
-  // Contact information data
-  const contactInfo = [
-    {
-      icon: <MapPinIcon className="w-4 h-5 text-blue" />,
-      text: 'г. Москва, р. Академический, ул.Евгения Савкова д.6',
-    },
-    {
-      icon: <PhoneIcon className="w-4 h-4 text-blue" />,
-      text: '+7 (343) 236-63-11',
-    },
-    {
-      icon: <MailIcon className="w-4 h-4 text-blue" />,
-      text: 'volnyigory@mail.ru',
-    },
-  ];
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const listItemClass = cn(
+    'text-gray-800 font-medium',
+    'hover:text-blue transition-colors duration-200',
+    'text-sm sm:text-base' // Адаптивный размер текста
+  );
 
   return (
-    <footer className="relative w-full mt-16 bg-gray-50 border-t border-gray-100">
-      {/* Main footer content */}
-      <div className="w-full bg-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-            {/* Navigation links */}
-            <motion.div
-              className="flex flex-col items-start gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h3 className="font-semibold text-lg text-gray-900 mb-2">Навигация</h3>
-              {navLinks.map((link, index) => (
-                <motion.div key={index} whileHover={{ x: 3 }}>
-                  <Link
-                    to={link.href}
-                    className="font-normal text-gray-600 hover:text-blue transition-colors text-sm"
-                  >
-                    {link.title}
-                  </Link>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Logo */}
-            <motion.div
-              className="flex flex-col items-center md:items-start"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <img className="w-24 h-24 object-contain" alt="Волны и Горы" src="/Logo.png" />
-              <h2 className="font-bold text-gray-900 text-xl mt-2">Волны&amp;Горы</h2>
-              <p className="text-gray-500 text-sm text-center md:text-left mt-2">
-                Лучшие SUP доски для активного отдыха на воде
-              </p>
-            </motion.div>
-
-            {/* Contact information */}
-            <motion.div
-              className="flex flex-col items-start gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <h3 className="font-semibold text-lg text-gray-900 mb-2">Контакты</h3>
-              {contactInfo.map((item, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue/10 rounded-full flex items-center justify-center">
-                    {item.icon}
-                  </div>
-                  <div className="font-normal text-gray-600 text-sm">{item.text}</div>
-                </div>
-              ))}
-            </motion.div>
-
-            {/* Contact form */}
-            <motion.div
-              className="flex flex-col items-center md:items-start gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <h3 className="font-semibold text-lg text-gray-900 mb-2">Заказать подбор доски</h3>
-              <p className="text-gray-600 text-sm text-center md:text-left">
-                Оставьте свой номер телефона и мы вам перезвоним
-              </p>
-
-              <div className="relative w-full">
-                <Input
-                  className="h-12 rounded-lg pl-4 pr-12 border-gray-300 focus:border-blue focus:ring-2 focus:ring-blue focus:ring-opacity-50"
-                  placeholder="Ваш телефон"
-                  type="tel"
+    <footer className="mx-4 sm:mx-6 lg:mx-8 my-6 sm:my-8 lg:my-10 text-white">
+      <div className="bg-skyblue border-2 border-blue rounded-t-lg overflow-hidden">
+        <div className="container mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            
+            {/* Logo Section */}
+            <div className="flex items-center sm:col-span-2 lg:col-span-1">
+              <Link 
+                to="/" 
+                className="inline-flex items-center hover:opacity-90 transition-opacity"
+              >
+                <img 
+                  alt="Логотип компании" 
+                  src="/Logo.png" 
+                  className="w-12 sm:w-14 md:w-16 h-auto object-contain" 
                 />
-                <Button
-                  className="absolute right-1 top-1/2 -translate-y-1/2 rounded-lg w-10 h-10 bg-blue hover:bg-blue/90"
-                  size="icon"
-                >
-                  <SendIcon className="w-4 h-4 text-white" />
-                </Button>
-              </div>
+                <span className="ml-3 text-lg sm:text-xl font-bold text-blue hidden sm:block">
+                  SUP Store
+                </span>
+              </Link>
+            </div>
 
-              <div className="flex items-center gap-2 mt-2">
-                <Checkbox 
-                  id="terms" 
-                  className="w-4 h-4 rounded-sm data-[state=checked]:bg-blue border-gray-300" 
-                />
-                <label htmlFor="terms" className="text-xs text-gray-500">
-                  <span>Я согласен на обработку моих </span>
-                  <span className="text-blue underline cursor-pointer">персональных данных</span>
-                </label>
-              </div>
-            </motion.div>
-          </div>
+            {/* Products Section */}
+            <section className="animate-fade-in">
+              <h2 className="font-bold text-sm sm:text-base text-blue uppercase mb-3 sm:mb-4">
+                Товары
+              </h2>
+              <nav>
+                <ul className="space-y-1 sm:space-y-2">
+                  {['SUP', 'Комплектующие', 'Товары для туризма', 'Аренда'].map((item) => (
+                    <li key={item}>
+                      <Link 
+                        to="/catalog" 
+                        className={cn(
+                          listItemClass,
+                          'flex items-center py-1 group'
+                        )}
+                      >
+                        <span className="group-hover:translate-x-1 transition-transform">
+                          {item}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </section>
 
-          {/* Copyright */}
-          <div className="mt-12 pt-6 border-t border-gray-100 text-center text-gray-500 text-sm">
-            <p>© 2025 Волны&amp;Горы. Все права защищены.</p>
+            {/* Help Section */}
+            <section className="animate-fade-in">
+              <h2 className="font-bold text-sm sm:text-base text-blue uppercase mb-3 sm:mb-4">
+                Помощь
+              </h2>
+              <nav>
+                <ul className="space-y-1 sm:space-y-2">
+                  {[
+                    { text: 'Доставка и оплата', path: '/delivery' },
+                    { text: 'Покупателю', path: '/buyer-info' },
+                    { text: 'FAQ', path: '/faq' },
+                    { text: 'Возврат', path: '/returns' }
+                  ].map((item) => (
+                    <li key={item.text}>
+                      <Link 
+                        to={item.path} 
+                        className={cn(
+                          listItemClass,
+                          'flex items-center py-1 group'
+                        )}
+                      >
+                        <span className="group-hover:translate-x-1 transition-transform">
+                          {item.text}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </section>
+
+            {/* Contacts Section */}
+            <section className="sm:col-span-2 lg:col-span-1 animate-fade-in">
+              <h2 className="font-bold text-sm sm:text-base text-blue uppercase mb-3 sm:mb-4">
+                Контакты
+              </h2>
+              <address className="not-italic">
+                <ul className="space-y-1 sm:space-y-2">
+                  <li>
+                    <Link 
+                      to="/contacts" 
+                      className={cn(
+                        listItemClass,
+                        'flex items-center py-1 group'
+                      )}
+                    >
+                      <span className="group-hover:translate-x-1 transition-transform">
+                        WhatsApp / Telegram
+                      </span>
+                    </Link>
+                  </li>
+                  <li>
+                    <button 
+                      onClick={() => copyToClipboard('+7 961 775 7144')} 
+                      className={cn(
+                        listItemClass,
+                        'flex items-center py-1 group w-full text-left'
+                      )}
+                    >
+                      <span className="group-hover:translate-x-1 transition-transform">
+                        +7 961 775 7144
+                      </span>
+                      {isCopied && (
+                        <span className="ml-2 text-xs bg-blue text-white px-2 py-1 rounded-full animate-bounce">
+                          Скопировано!
+                        </span>
+                      )}
+                    </button>
+                  </li>
+                  <li>
+                    <Link 
+                      to="https://maps.google.com/?q=г. Екатеринбург, ул. Академика Бардина, 32/1" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className={cn(
+                        listItemClass,
+                        'flex items-center py-1 group'
+                      )}
+                    >
+                      <span className="group-hover:translate-x-1 transition-transform">
+                        г. Екатеринбург, ул. Академика Бардина, 32/1
+                      </span>
+                    </Link>
+                  </li>
+                
+                </ul>
+              </address>
+            </section>
           </div>
+        </div>
+      </div>
+
+      {/* Legal Section */}
+      <div className="bg-blue py-3 sm:py-4 rounded-b-lg">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <ul className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 sm:gap-4 md:gap-6 text-xs sm:text-sm font-semibold uppercase">
+            <li className="hover:text-sky-200 transition-colors">
+              ИП Разов А.Д
+            </li>
+            <li className="hover:text-sky-200 transition-colors">
+              ИНН 667104649446
+            </li>
+            <li>
+              <Link 
+                to="/privacy" 
+                className="hover:text-sky-200 transition-colors hover:underline"
+              >
+                Политика конфиденциальности
+              </Link>
+            </li>
+            <li>
+              <Link 
+                to="/terms" 
+                className="hover:text-sky-200 transition-colors hover:underline"
+              >
+                Пользовательское соглашение
+              </Link>
+            </li>
+            <li className="text-xs opacity-80 mt-2 sm:mt-0 sm:ml-auto">
+              © {new Date().getFullYear()} SUP Store. Все права защищены.
+            </li>
+          </ul>
         </div>
       </div>
     </footer>

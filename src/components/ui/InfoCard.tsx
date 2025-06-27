@@ -1,4 +1,6 @@
 import cn from 'classnames';
+import cardBgBg from '../../../public/cardBgBig.svg';
+import cardBgSm from '../../../public/cardBgSm.svg';
 
 type InfoCardType = 'small' | 'normal';
 
@@ -11,6 +13,8 @@ interface InfoCardProps {
 }
 
 export const InfoCard = ({ size = 'normal', title, img, description, badgeDate }: InfoCardProps) => {
+  const backgroundImage = size === 'small' ? cardBgSm : cardBgBg;
+  
   return (
     <div
       className={cn(
@@ -19,6 +23,12 @@ export const InfoCard = ({ size = 'normal', title, img, description, badgeDate }
         size === 'small' ? 'min-h-[260px]' : 'min-h-[400px]',
         'md:flex-row md:h-full'
       )}
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat"
+      }}
     >
       {/* Текстовый контент */}
       <div
@@ -51,8 +61,8 @@ export const InfoCard = ({ size = 'normal', title, img, description, badgeDate }
         className={cn(
           'relative flex-1',
           'min-h-[200px] md:min-h-0',
-          'flex items-center justify-center', // Центрируем изображение
-          'bg-gray-100' // Фон на случай если изображение не загрузится
+          'flex items-center justify-center',
+          'bg-gray-100 bg-opacity-50' // Добавим прозрачность чтобы фон был виден
         )}
       >
         {img && (
@@ -60,8 +70,8 @@ export const InfoCard = ({ size = 'normal', title, img, description, badgeDate }
             src={img}
             alt={title}
             className={cn(
-              'w-full h-full object-contain', // Используем object-contain вместо object-cover
-              'md:absolute md:inset-0', // Абсолютное позиционирование только на десктопе
+              'w-full h-full object-contain',
+              'md:absolute md:inset-0',
               'transition-transform duration-300 hover:scale-105',
               size === 'small' ? 'md:object-left' : 'md:object-center'
             )}

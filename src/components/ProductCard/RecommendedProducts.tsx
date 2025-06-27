@@ -2,111 +2,16 @@ import React, { useCallback, useRef, memo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCart } from '../../lib/context/CartContext';
 import { useFavorites } from '../../lib/context/FavoritesContext';
-import { Button } from '../ui/button';
-import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import {  ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product } from '../../lib/types';
 import { AddedToCartModal } from './AddedToCartModal';
+import { NewProductCard } from './NewProductCard';
 
 interface RecommendedProductsProps {
   title?: string;
   products: Product[];
   showControls?: boolean;
 }
-
-const RecommendedProductItem = memo(
-  ({
-    product,
-    addToCart,
-    isFavorite,
-    toggleFavorite,
-    showAddedModal,
-  }: {
-    product: Product;
-    addToCart: (product: Product) => void;
-    isFavorite: (id: number) => boolean;
-    toggleFavorite: (product: Product) => void;
-    showAddedModal: (product: Product) => void;
-  }) => {
-    const handleAddToCartClick = () => {
-      addToCart(product);
-      showAddedModal(product);
-    };
-
-    return (
-      <motion.div
-        layout
-        key={product.id}
-        className="flex-shrink-0 w-[250px] snap-start bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100"
-        whileHover={{ y: -5 }}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="relative">
-          <Link to={`/product/${product.id}`}>
-            <div className="h-40 flex items-center justify-center p-4 bg-gray-50 overflow-hidden">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="max-h-full max-w-full object-contain transition-transform hover:scale-105"
-              />
-            </div>
-          </Link>
-        </div>
-
-        <div className="p-4">
-          <Link to={`/product/${product.id}`}>
-            <h4 className="font-medium text-gray-800 text-sm mb-1 line-clamp-2 h-10">{product.name}</h4>
-          </Link>
-
-          <div className="text-xs text-gray-500 mb-2">{product.brand}</div>
-
-          <div className="flex justify-between items-center">
-            <span className="font-bold text-gray-900">{product.price}</span>
-            <div className="flex items-center">
-              <div className="w-4 h-4">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                    fill="#FFC107"
-                    stroke="#FFC107"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-              <span className="text-xs ml-1 text-gray-500">4.8</span>
-            </div>
-          </div>
-
-          <div className="flex space-x-2 mt-3">
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="flex-1">
-              <Button
-                className="w-full h-9 bg-blue hover:bg-gray-700 text-white rounded-full text-xs flex items-center justify-center gap-1"
-                onClick={handleAddToCartClick}
-              >
-                <ShoppingCart className="w-3 h-3" />В корзину
-              </Button>
-            </motion.div>
-
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="flex-1">
-              <Link to={`/product/${product.id}`}>
-                <Button
-                  variant="outline"
-                  className="w-full h-9 border-gray-300 text-gray-700 hover:bg-gray-50 rounded-full text-xs"
-                >
-                  Подробнее
-                </Button>
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </motion.div>
-    );
-  },
-);
 
 export const RecommendedProducts: React.FC<RecommendedProductsProps> = memo(
   ({ title = 'Рекомендуемые товары', products, showControls = true }) => {
@@ -192,14 +97,11 @@ export const RecommendedProducts: React.FC<RecommendedProductsProps> = memo(
           }}
         >
           {products.map((product) => (
-            <RecommendedProductItem
-              key={product.id}
-              product={product}
-              addToCart={handleAddToCart}
-              isFavorite={isFavorite}
-              toggleFavorite={toggleFavorite}
-              showAddedModal={showAddedModal}
-            />
+           <NewProductCard
+           key={product.id}
+            product={product}
+            isLarge={false}
+           />
           ))}
         </div>
 

@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFilters } from '../lib/context/FilterContext';
-import { SearchBar } from '../components/Search/SearchBar';
 import { Button } from '../components/ui/button';
 import { RecommendedProducts } from '../components/ProductCard/RecommendedProducts';
 import { getAllProducts, getProductsByCategory } from '../lib/api/products';
 import { Product } from '../lib/types';
 import { FilterSideBar } from '../components/FilterSideBar/FilterSideBar';
-import { SortOptions } from '../components/SortOptions/SortOptions';
-import { Pagination } from '../components/Pagination/Pagination';
+import { SectionWrapper } from '../components/ui/SectionWrapper';
+import cn from 'classnames';
+import { ChevronRight, SlidersHorizontal } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const CatalogPage: React.FC = () => {
-  const { filters, toggleBrandFilter, setPriceRange, resetFilters, getFilteredPrice } = useFilters();
+  const { filters, toggleBrandFilter, setActiveCategory, setPriceRange, resetFilters, getFilteredPrice } = useFilters();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
-  const [showMobileFilter, setShowMobileFilter] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [sliderMin, setSliderMin] = useState(filters.priceRange[0]);
   const [sliderMax, setSliderMax] = useState(filters.priceRange[1]);
@@ -31,13 +32,13 @@ export const CatalogPage: React.FC = () => {
       try {
         const products = await getAllProducts();
         setAllProducts(products);
-        
+
         // Популярные товары (первые 6)
         setPopularProducts(products.slice(0, 6));
-        
+
         // Новые поступления (следующие 4)
         setNewProducts(products.slice(6, 10));
-        
+
         setIsLoading(false);
       } catch (error) {
         console.error('Ошибка при загрузке товаров:', error);
@@ -115,32 +116,59 @@ export const CatalogPage: React.FC = () => {
     setFilteredProducts(applyFilters());
   }, [filters, searchQuery, sortOrder, allProducts]);
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  const handleSortClick = (order: 'asc' | 'desc') => {
-    setSortOrder(sortOrder === order ? null : order);
-  };
+  // const handleSearch = (query: string) => {
+  //   setSearchQuery(query);
+  // };
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Каталог товаров</h1>
-
-      <SearchBar onSearch={handleSearch} products={allProducts} />
-      {/* <SortOptions handleSortClick={handleSortClick} sortOrder={sortOrder} /> */}
+    <SectionWrapper title="Каталог">
+      {/* <SearchBar onSearch={handleSearch} products={allProducts} /> */}
+<nav className="flex items-center text-sm text-gray-500 mb-8">
+        <Link to="/" className="hover:text-blue-600 transition-colors">
+          Главная
+        </Link>
+        <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
+        <span className="text-gray-700 font-medium">Каталог</span>
+      </nav>
+      <div className="flex justify-between items-center">
+        <div>
+          <button className="flex items-center font-semibold gap-[8px]" onClick={() => setShowFilter(!showFilter)}>
+       
+              <SlidersHorizontal color="#003153" />
+         
+            Фильтры
+          </button>
+        </div>
+        <div className="flex items-center gap-[20px]">
+          {filters.categories.map((category, index) => (
+            <div key={index}>
+              <button
+                onClick={() => setActiveCategory(category)}
+                className={cn(
+                  `${category === filters.activeCategory ? 'bg-blue text-white' : ' bg-skyblue text-blue'} text-blue font-semibold lg:flex hidden gap-[10px] p-[8px] rounded-[8px]`,
+                )}
+              >
+                {category}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="flex flex-col lg:flex-row w-full gap-4 lg:gap-8 mt-2">
         {/* Filter sidebar */}
-        {/* {showMobileFilter && (
-          <FilterSideBar
-            filters={filters}
-            toggleBrandFilter={toggleBrandFilter}
-            setPriceRange={setPriceRange}
-            resetFilters={resetFilters}
-            getFilteredPrice={getFilteredPrice}
-          />
-        )} */}
+        {showFilter && (
+          <div className='absolute z-50'>
+            <FilterSideBar
+              filters={filters}
+              toggleBrandFilter={toggleBrandFilter}
+              setPriceRange={setPriceRange}
+              resetFilters={resetFilters}
+              getFilteredPrice={getFilteredPrice}
+              toggleShowFilter={setShowFilter}
+            />
+          </div>
+        )}
 
         {/* Product grid */}
         <div className="flex-1">
@@ -152,38 +180,30 @@ export const CatalogPage: React.FC = () => {
             <>
               {/* Популярные товары */}
               {popularProducts.length > 0 && (
-                <RecommendedProducts
-                  title="Популярные товары"
-                  products={popularProducts}
-                />
+                <RecommendedProducts title="Популярные товары" products={popularProducts} />
               )}
 
               {/* Товары категории */}
-              {/* {filters.activeCategory && categoryProducts.length > 0 && (
+              {filters.activeCategory && categoryProducts.length > 0 && (
                 <RecommendedProducts
                   title={`Популярные ${filters.activeCategory}`}
                   products={categoryProducts.slice(0, 4)}
                 />
-              )} */}
+              )}
 
               {/* Отфильтрованные товары */}
-              {/* <div className="flex-1">
+              <div className="flex-1">
                 <AnimatePresence>
                   {filteredProducts.length > 0 && (
                     <RecommendedProducts title="Отфильтрованные товары" products={filteredProducts} />
                   )}
                 </AnimatePresence>
-              </div> */}
+              </div>
 
               {/* Новые поступления */}
-              {newProducts.length > 0 && (
-                <RecommendedProducts
-                  title="Новые поступления"
-                  products={newProducts}
-                />
-              )}
+              {newProducts.length > 0 && <RecommendedProducts title="Новые поступления" products={newProducts} />}
 
-              {/* {filteredProducts.length === 0 && !isLoading && (
+              {filteredProducts.length === 0 && !isLoading && (
                 <motion.div
                   className="py-8 text-center text-gray-500"
                   initial={{ opacity: 0 }}
@@ -191,11 +211,11 @@ export const CatalogPage: React.FC = () => {
                   transition={{ duration: 0.5 }}
                 >
                   <p className="text-lg">Товары не найдены. Пожалуйста, измените параметры поиска.</p>
-                  <Button className="mt-4 bg-blue-4 hover:bg-blue-600 text-white" onClick={resetFilters}>
+                  <Button className="mt-4 bg-blue text-white" onClick={resetFilters}>
                     Сбросить все фильтры
                   </Button>
                 </motion.div>
-              )} */}
+              )}
             </>
           )}
         </div>
@@ -208,6 +228,6 @@ export const CatalogPage: React.FC = () => {
       {filteredProducts.length > 0 && !isLoading && allProducts.length > 10 && (
         <RecommendedProducts title="Вам также может понравиться" products={allProducts.slice(10, 16)} />
       )}
-    </div>
+    </SectionWrapper>
   );
 };

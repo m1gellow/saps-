@@ -14,58 +14,66 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const { product, quantity } = item;
 
   const handleDecreaseQuantity = () => {
-    updateQuantity(product.id, quantity - 1);
+    if (quantity > 1) {
+      updateQuantity(product.id, quantity - 1);
+    } else {
+      removeFromCart(product.id);
+    }
   };
 
   const handleIncreaseQuantity = () => {
     updateQuantity(product.id, quantity + 1);
   };
 
-  // Форматирование цены с пробелами между тысячами
-  const formatPrice = (price: string) => {
-    return price.replace(/(\d)(?=(\d{3})+\s*\.)/g, '$1 ');
-  };
-
   return (
     <motion.div
-      className="flex items-center justify-between p-4 border-b border-gray-200"
-      initial={{ opacity: 0, y: 20 }}
+      className="flex items-center p-5 hover:bg-gray-50 transition-colors"
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
-      transition={{ duration: 0.3 }}
+      exit={{ opacity: 0, x: -50, height: 0 }}
+      transition={{ duration: 0.2 }}
       layout
     >
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center flex-1 min-w-0">
         <motion.div
-          className="w-16 h-16 bg-gray-50 rounded-md flex items-center justify-center p-1"
-          whileHover={{ scale: 1.05 }}
+          className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden"
+          whileHover={{ scale: 1.03 }}
+          transition={{ duration: 0.2 }}
         >
-          <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
+          <img 
+            src={product.image} 
+            alt={product.name} 
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
         </motion.div>
-        <div>
-          <h3 className="font-normal text-[#333333] text-lg">
-            <span>{product.name.split(' ')[0]} </span>
-            <span className="font-light">{product.name.split(' ').slice(1).join(' ')}</span>
-          </h3>
-          <p className="text-gray-1 font-semibold">{formatPrice(product.price)}</p>
+        
+        <div className="ml-4 flex-1 min-w-0">
+          <h3 className="text-lg font-medium text-gray-900 truncate">{product.name}</h3>
+          <p className="text-gray-500 text-sm mt-1">{product.category}</p>
+          <p className="text-blue-600 font-semibold mt-2">
+            {product.price.toLocaleString('ru-RU')} ₽
+          </p>
         </div>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 ml-4">
         <QuantitySelector
           quantity={quantity}
           onDecrease={handleDecreaseQuantity}
           onIncrease={handleIncreaseQuantity}
-          small
+          min={1}
+          className="border border-gray-200 rounded-lg"
         />
 
         <motion.button
-          className="text-red-500 hover:text-red-700 flex items-center justify-center"
+          className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors"
           onClick={() => removeFromCart(product.id)}
           whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label="Удалить товар"
         >
-          <Trash2Icon className="w-4 h-4" />
+          <Trash2Icon className="w-5 h-5" />
         </motion.button>
       </div>
     </motion.div>

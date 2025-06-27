@@ -97,7 +97,7 @@ const AppContent = (): JSX.Element => {
   }, [filters, searchQuery, sortOrder, products]);
 
   return (
-    <div className="w-full max-w-full overflow-hidden bg-gray-50">
+    <div className="w-full max-w-full overflow-hidden ">
       <div className="relative">
         <NavSection />
 
