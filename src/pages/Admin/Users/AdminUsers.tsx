@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Plus, Edit, Trash2,Eye, EyeOff, X, Check, User, Loader2 } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Lock, Eye, EyeOff, X, Check, User, Loader2 } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { getAdminUsers } from '../../../lib/api/admin';
@@ -312,7 +312,7 @@ export const AdminUsers = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <h1 className="text-2xl font-bold text-gray-800">Пользователи</h1>
         <Button
-          className="bg-blue text-white rounded-full flex items-center gap-2"
+          className="bg-blue-4 hover:bg-teal-600 text-white rounded-full flex items-center gap-2"
           onClick={handleCreateUser}
         >
           <Plus size={16} />

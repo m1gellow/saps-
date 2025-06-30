@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Filter, ChevronDown } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { Input } from '../../../../components/ui/input';
 import { Button } from '../../../../components/ui/button';
 
@@ -49,9 +49,7 @@ export const OrdersFilters: React.FC<OrdersFiltersProps> = ({
               <option value="Ожидает оплаты">Ожидает оплаты</option>
               <option value="Отменен">Отменен</option>
             </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <ChevronDown size={18} className="text-gray-400" />
-            </div>
+          
           </div>
 
           <div className="relative">
@@ -66,9 +64,7 @@ export const OrdersFilters: React.FC<OrdersFiltersProps> = ({
               <option value="last7days">Последние 7 дней</option>
               <option value="last30days">Последние 30 дней</option>
             </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <ChevronDown size={18} className="text-gray-400" />
-            </div>
+          
           </div>
 
           <Button variant="outline" className="h-10 px-4 border-gray-300 text-gray-700 gap-2">

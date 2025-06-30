@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { XIcon, ChevronDownIcon } from 'lucide-react';
+import { XIcon, ChevronDownIcon, Check } from 'lucide-react';
 import { Button } from '../ui/button';
 
 interface FilterSideBarProps {
@@ -17,7 +17,7 @@ interface FilterSideBarProps {
 }
 
 const CheckboxItem = ({ label, count, checked, onChange }) => (
-  <label className="flex items-center space-x-3 cursor-pointer text-base">
+  <label className="flex items-center space-x-3 cursor-pointer ">
     <input
       type="checkbox"
       checked={checked}
@@ -25,15 +25,7 @@ const CheckboxItem = ({ label, count, checked, onChange }) => (
       className="sr-only peer"
     />
     <div className="w-5 h-5 rounded flex items-center justify-center border border-gray-300 peer-checked:bg-[#003153] peer-checked:border-[#003153]">
-      <svg
-        className="w-3 h-3 text-white hidden peer-checked:block"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={3}
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-      </svg>
+      <Check color='white'/>
     </div>
     <span className="text-gray-800">{label}</span>
     {count !== undefined && <span className="text-gray-400">({count})</span>}

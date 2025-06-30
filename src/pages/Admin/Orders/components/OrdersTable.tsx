@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Eye, CheckCircle, Printer } from 'lucide-react';
+import { Eye, CheckCircle } from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
 import { formatDate, getStatusBadgeClass, getStatusIcon } from '../utils/formatters';
 import { Order } from '../../../../lib/types';
@@ -130,12 +130,6 @@ export const OrdersTable: React.FC<OrdersTableProps> = ({
                       title="Изменить статус"
                     >
                       <CheckCircle size={16} />
-                    </button>
-                    <button
-                      className="p-1 text-indigo-500 hover:text-indigo-700 transition-colors rounded-full hover:bg-indigo-50"
-                      title="Распечатать заказ"
-                    >
-                      <Printer size={16} />
                     </button>
                   </div>
                 </td>

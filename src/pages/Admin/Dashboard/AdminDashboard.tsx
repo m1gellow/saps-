@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { ShoppingBag, Users, CreditCard, Package, Loader2, ChevronRight, AlertCircle } from 'lucide-react';
 import { getAdminDashboardStats } from '../../../lib/api/admin';
 import { Link } from 'react-router-dom';
-import { StatsCard } from './StatsCard';
-import { LastOrders } from './LastOrders';
-import { LastItems } from './LastItems';
-import { Analytics } from './Analytics';
+import { StatsCard } from './components/StatsCard';
+import { LastOrders } from './components/LastOrders';
+import { LastItems } from './components/LastItems';
+import { Analytics } from './components/Analytics';
 
 export const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
