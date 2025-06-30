@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 
 import { SectionWrapper } from '../../components/ui/SectionWrapper';
 import { InfoCard } from '../../components/ui/InfoCard';
