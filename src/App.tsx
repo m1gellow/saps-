@@ -24,14 +24,17 @@ import DeliveryPage from './pages/DeliveryPage';
 
 // Admin Pages
 import { AdminLayout } from './pages/Admin/AdminLayout';
-import { AdminLogin } from './pages/Admin/AdminLogin';
-import { AdminDashboard } from './pages/Admin/AdminDashboard';
-import { AdminProducts } from './pages/Admin/AdminProducts';
+
+import { AdminDashboard } from './pages/Admin/Dashboard/AdminDashboard';
+import { AdminProducts } from './pages/Admin/Products/AdminProducts';
 import { AdminOrdersPage } from './pages/Admin/Orders';
 // import { AdminContent } from './pages/Admin/AdminContent';
-import { AdminUsers } from './pages/Admin/AdminUsers';
-import { AdminSettings } from './pages/Admin/AdminSettings';
+
 import { OrderSuccess } from './pages/OrderSucess';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { AdminSettings } from './pages/Admin/Settings/AdminSettings';
+import { AdminUsers } from './pages/Admin/Users/AdminUsers';
+import { AdminLogin } from './pages/Admin/Login/AdminLogin';
 
 const AppContent = (): JSX.Element => {
   const { filters } = useFilters();
@@ -125,7 +128,7 @@ const AppContent = (): JSX.Element => {
           </Route>
 
           {/* Fallback route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
 
         <FooterSection />

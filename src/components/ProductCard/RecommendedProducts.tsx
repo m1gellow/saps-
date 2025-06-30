@@ -16,33 +16,9 @@ interface RecommendedProductsProps {
 export const RecommendedProducts: React.FC<RecommendedProductsProps> = memo(
   ({ title = 'Рекомендуемые товары', products, showControls = true }) => {
     const { addToCart } = useCart();
-    const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
     const containerRef = useRef<HTMLDivElement>(null);
     const [modalProduct, setModalProduct] = useState<Product | null>(null);
     const [showModal, setShowModal] = useState(false);
-
-    const handleAddToCart = useCallback(
-      (product: Product) => {
-        addToCart(product);
-      },
-      [addToCart],
-    );
-
-    const toggleFavorite = useCallback(
-      (product: Product) => {
-        if (isFavorite(product.id)) {
-          removeFromFavorites(product.id);
-        } else {
-          addToFavorites(product);
-        }
-      },
-      [isFavorite, removeFromFavorites, addToFavorites],
-    );
-
-    const showAddedModal = useCallback((product: Product) => {
-      setModalProduct(product);
-      setShowModal(true);
-    }, []);
 
     const nextSlide = useCallback(() => {
       if (containerRef.current) {

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Plus, Edit, Trash2, Lock, Eye, EyeOff, X, Check, User, Loader2 } from 'lucide-react';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { getAdminUsers } from '../../lib/api/admin';
-import { supabase } from '../../lib/supabase';
+import { Search, Plus, Edit, Trash2,Eye, EyeOff, X, Check, User, Loader2 } from 'lucide-react';
+import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
+import { getAdminUsers } from '../../../lib/api/admin';
+import { supabase } from '../../../lib/supabase';
 
 export const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -84,52 +84,48 @@ export const AdminUsers = () => {
   };
 
   // Handle editing a user
- const handleEditUser = async (user) => {
-  try {
-    setIsLoading(true);
-    
-    // Получаем актуальные данные пользователя перед редактированием
-    const { data, error } = await supabase
-      .from('user_profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
+  const handleEditUser = async (user) => {
+    try {
+      setIsLoading(true);
 
-    if (error) throw error;
-    if (!data) throw new Error('Пользователь не найден');
+      // Получаем актуальные данные пользователя перед редактированием
+      const { data, error } = await supabase.from('user_profiles').select('*').eq('id', user.id).single();
 
-    setSelectedUser({
-      ...data,
-      password: '',
-      confirmPassword: '',
-    });
-    setIsUserModalOpen(true);
-  } catch (error) {
-    console.error('Ошибка при загрузке данных пользователя:', error);
-    setError('Не удалось загрузить данные пользователя для редактирования');
-  } finally {
-    setIsLoading(false);
-  }
-};
+      if (error) throw error;
+      if (!data) throw new Error('Пользователь не найден');
+
+      setSelectedUser({
+        ...data,
+        password: '',
+        confirmPassword: '',
+      });
+      setIsUserModalOpen(true);
+    } catch (error) {
+      console.error('Ошибка при загрузке данных пользователя:', error);
+      setError('Не удалось загрузить данные пользователя для редактирования');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Handle deleting a user
-const handleDeleteUser = async (user) => {
-  try {
-    setIsLoading(true);
-    const { error } = await supabase.from('user_profiles').delete().eq('id', user.id);
-    
-    if (error) {
-      throw error;
+  const handleDeleteUser = async (user) => {
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.from('user_profiles').delete().eq('id', user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      // Обновляем состояние, используя id пользователя из параметра функции
+      setUsers(users.filter((u) => u.id !== user.id));
+    } catch (error) {
+      console.error('Ошибка при удалении пользователя:', error);
+    } finally {
+      setIsLoading(false);
     }
-    
-    // Обновляем состояние, используя id пользователя из параметра функции
-    setUsers(users.filter(u => u.id !== user.id));
-  } catch (error) {
-    console.error('Ошибка при удалении пользователя:', error);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   // Confirm user deletion
   // const confirmDeleteUser = async () => {
@@ -148,61 +144,55 @@ const handleDeleteUser = async (user) => {
 
   // Save user data
   const handleSaveUser = async (userData) => {
-  setIsLoading(true);
+    setIsLoading(true);
 
-  try {
-    if (userData.id) {
-      // Обновление существующего пользователя
-      const { error: updateError } = await supabase
-        .from('user_profiles')
-        .update({
-          name: userData.name,
-          email: userData.email,
-          role: userData.role,
-          status: userData.status,
-        })
-        .eq('id', userData.id);
+    try {
+      if (userData.id) {
+        // Обновление существующего пользователя
+        const { error: updateError } = await supabase
+          .from('user_profiles')
+          .update({
+            name: userData.name,
+            email: userData.email,
+            role: userData.role,
+            status: userData.status,
+          })
+          .eq('id', userData.id);
 
-      if (updateError) throw updateError;
+        if (updateError) throw updateError;
 
-      // Если пользователь администратор/менеджер - обновляем в таблице admins
-      if (userData.role === 'admin' || userData.role === 'manager') {
-        const { error: adminError } = await supabase
-          .from('admins')
-          .upsert({
+        // Если пользователь администратор/менеджер - обновляем в таблице admins
+        if (userData.role === 'admin' || userData.role === 'manager') {
+          const { error: adminError } = await supabase.from('admins').upsert({
             id: userData.id,
             username: userData.email.split('@')[0],
             name: userData.name,
             role: userData.role,
           });
 
-        if (adminError) console.error('Ошибка обновления администратора:', adminError);
-      }
+          if (adminError) console.error('Ошибка обновления администратора:', adminError);
+        }
 
-      // Обновляем состояние
-      setUsers(users.map(user => 
-        user.id === userData.id ? { ...user, ...userData } : user
-      ));
-    } else {
-      // Создание нового пользователя (осталось без изменений)
-      const { data, error } = await supabase.auth.signUp({
-        email: userData.email,
-        password: userData.password,
-      });
+        // Обновляем состояние
+        setUsers(users.map((user) => (user.id === userData.id ? { ...user, ...userData } : user)));
+      } else {
+        // Создание нового пользователя (осталось без изменений)
+        const { data, error } = await supabase.auth.signUp({
+          email: userData.email,
+          password: userData.password,
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      if (data.user) {
-        const newUser = {
-          ...userData,
-          id: data.user.id,
-          lastLogin: new Date().toISOString(),
-        };
+        if (data.user) {
+          const newUser = {
+            ...userData,
+            id: data.user.id,
+            lastLogin: new Date().toISOString(),
+          };
 
-        // Создаем запись в таблице user_profiles
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .insert({
+          // Создаем запись в таблице user_profiles
+          const { error: profileError } = await supabase.from('user_profiles').insert({
             id: data.user.id,
             email: userData.email,
             name: userData.name,
@@ -210,34 +200,32 @@ const handleDeleteUser = async (user) => {
             status: userData.status,
           });
 
-        if (profileError) throw profileError;
+          if (profileError) throw profileError;
 
-        // Добавляем в admins если нужно
-        if (userData.role === 'admin' || userData.role === 'manager') {
-          const { error: adminError } = await supabase
-            .from('admins')
-            .insert({
+          // Добавляем в admins если нужно
+          if (userData.role === 'admin' || userData.role === 'manager') {
+            const { error: adminError } = await supabase.from('admins').insert({
               id: data.user.id,
               username: userData.email.split('@')[0],
               name: userData.name,
               role: userData.role,
             });
 
-          if (adminError) console.error('Ошибка добавления администратора:', adminError);
+            if (adminError) console.error('Ошибка добавления администратора:', adminError);
+          }
+
+          setUsers([...users, newUser]);
         }
-
-        setUsers([...users, newUser]);
       }
-    }
 
-    setIsUserModalOpen(false);
-  } catch (error) {
-    console.error('Ошибка при сохранении пользователя:', error);
-    setError('Не удалось сохранить пользователя. Пожалуйста, попробуйте позже.');
-  } finally {
-    setIsLoading(false);
-  }
-};
+      setIsUserModalOpen(false);
+    } catch (error) {
+      console.error('Ошибка при сохранении пользователя:', error);
+      setError('Не удалось сохранить пользователя. Пожалуйста, попробуйте позже.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Format date
   const formatDate = (dateString) => {
@@ -324,7 +312,7 @@ const handleDeleteUser = async (user) => {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <h1 className="text-2xl font-bold text-gray-800">Пользователи</h1>
         <Button
-          className="bg-blue-4 hover:bg-teal-600 text-white rounded-full flex items-center gap-2"
+          className="bg-blue text-white rounded-full flex items-center gap-2"
           onClick={handleCreateUser}
         >
           <Plus size={16} />

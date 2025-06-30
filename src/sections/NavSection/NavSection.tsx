@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../../lib/context/CartContext';
-import { Grid2x2Plus, Menu, ShoppingBag, UserRound, X } from 'lucide-react';
+import { Grid2x2Plus, Heart, Menu, ShoppingBag, UserRound, X } from 'lucide-react';
 import { useState } from 'react';
 import cn from 'classnames';
 
@@ -85,6 +85,11 @@ export const NavSection = (): JSX.Element => {
           </div>
 
           <div className="md:flex hidden items-center justify-center gap-[20px]">
+              <Link to={'/favorites'}>
+              <div className="gap-[8px] flex items-center">
+                <Heart color="#333333" />
+              </div>
+            </Link>
             <Link to={'/cart'}>
               <div className="gap-[8px] flex items-center">
                 <ShoppingBag color="#333333" />

@@ -18,8 +18,8 @@ export const CartPage: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100"
         >
-          <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <ShoppingCartIcon className="w-10 h-10 text-blue-500" />
+          <div className="w-24 h-24 bg-blue rounded-full flex items-center justify-center mx-auto mb-6">
+            <ShoppingCartIcon className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-800 mb-3">Ваша корзина пуста</h1>
           <p className="text-gray-500 mb-6">Найдите что-нибудь по душе в нашем каталоге</p>
@@ -44,7 +44,7 @@ export const CartPage: React.FC = () => {
         </Link>
         <div className="mt-4 flex items-center">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Ваша корзина</h1>
-          <span className="ml-3 bg-blue-100 text-blue-600 text-sm font-medium px-3 py-1 rounded-full">
+          <span className="ml-3 bg-white text-blue text-sm font-medium px-3 py-1 rounded-full">
             {totalItems} {totalItems === 1 ? 'товар' : totalItems < 5 ? 'товара' : 'товаров'}
           </span>
         </div>
@@ -95,7 +95,7 @@ export const CartPage: React.FC = () => {
               </div>
               <div className="pt-4 border-t border-gray-200 flex justify-between items-center">
                 <span className="font-semibold text-lg">Итого:</span>
-                <span className="text-blue-600 font-bold text-xl">{totalPrice.toLocaleString('ru-RU')} ₽</span>
+                <span className="text-bluefont-bold text-xl">{totalPrice.toLocaleString('ru-RU')} ₽</span>
               </div>
             </div>
 
@@ -106,8 +106,8 @@ export const CartPage: React.FC = () => {
             </Link>
 
             <div className="mt-8 space-y-4">
-              <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                <GiftIcon className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+              <div className="flex items-start gap-3 p-3 bg-blue rounded-lg">
+                <GiftIcon className="w-5 h-5 text-blue mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-gray-800">Бесплатная доставка</p>
                   <p className="text-xs text-gray-500">При заказе от 5 000 ₽</p>

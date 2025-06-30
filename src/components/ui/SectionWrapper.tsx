@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import cn from 'classnames';
 
 interface SectionWrapperProps {
-  title: string;
+  title?: string;
   children: ReactNode;
   className?: string;
   titleClassName?: string;
@@ -23,15 +23,11 @@ export const SectionWrapper = ({
   layout = 'default'
 }: SectionWrapperProps) => {
   return (
-    <motion.section 
+    <section 
       className={cn(
         'w-full mt-[100px] md:py-8',
         className
       )}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true, margin: "-100px" }}
     >
       <div className={containerClassName}>
         <h2 className={cn(
@@ -50,6 +46,6 @@ export const SectionWrapper = ({
           {children}
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 };

@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useFilters } from '../lib/context/FilterContext';
-import { Button } from '../components/ui/button';
-import { RecommendedProducts } from '../components/ProductCard/RecommendedProducts';
 import { getAllProducts, getProductsByCategory } from '../lib/api/products';
 import { Product } from '../lib/types';
 import { FilterSideBar } from '../components/FilterSideBar/FilterSideBar';
 import { SectionWrapper } from '../components/ui/SectionWrapper';
 import cn from 'classnames';
-import { ChevronRight, SlidersHorizontal } from 'lucide-react';
+import { ChevronRight, SlidersHorizontal, Search, X, Frown } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { NewProductCard } from '../components/ProductCard/NewProductCard';
 
 export const CatalogPage: React.FC = () => {
-  const { filters, toggleBrandFilter, setActiveCategory, setPriceRange, resetFilters, getFilteredPrice } = useFilters();
+  const { filters, toggleBrandFilter, setActiveCategory, setPriceRange, resetFilters } = useFilters();
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | 'default'>('default');
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [sliderMin, setSliderMin] = useState(filters.priceRange[0]);
-  const [sliderMax, setSliderMax] = useState(filters.priceRange[1]);
   const [isLoading, setIsLoading] = useState(true);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [popularProducts, setPopularProducts] = useState<Product[]>([]);
@@ -32,13 +28,8 @@ export const CatalogPage: React.FC = () => {
       try {
         const products = await getAllProducts();
         setAllProducts(products);
-
-        // Популярные товары (первые 6)
         setPopularProducts(products.slice(0, 6));
-
-        // Новые поступления (следующие 4)
         setNewProducts(products.slice(6, 10));
-
         setIsLoading(false);
       } catch (error) {
         console.error('Ошибка при загрузке товаров:', error);
@@ -53,11 +44,14 @@ export const CatalogPage: React.FC = () => {
   useEffect(() => {
     if (filters.activeCategory) {
       const fetchCategoryProducts = async () => {
+        setIsLoading(true);
         try {
-          const productsData = await getProductsByCategory(filters.activeCategory);
-          setCategoryProducts(productsData);
+          const products = await getProductsByCategory(filters.activeCategory);
+          setCategoryProducts(products);
         } catch (error) {
           console.error(`Ошибка при загрузке товаров категории ${filters.activeCategory}:`, error);
+        } finally {
+          setIsLoading(false);
         }
       };
 
@@ -67,167 +61,260 @@ export const CatalogPage: React.FC = () => {
     }
   }, [filters.activeCategory]);
 
-  // Обновление локальных слайдеров при изменении фильтров
-  useEffect(() => {
-    setSliderMin(filters.priceRange[0]);
-    setSliderMax(filters.priceRange[1]);
-  }, [filters.priceRange]);
-
-  // Filter and sort products
+  // Фильтрация и сортировка товаров
   useEffect(() => {
     const applyFilters = () => {
-      let filtered = [...allProducts];
+      let filtered = filters.activeCategory ? [...categoryProducts] : [...allProducts];
 
-      // Category filter
-      if (filters.activeCategory) {
-        filtered = filtered.filter((product) => product.category === filters.activeCategory);
+      // Фильтр по брендам
+      if (filters.brands.some((b) => b.checked)) {
+        filtered = filtered.filter((product) => filters.brands.find((b) => b.name === product.brand)?.checked);
       }
 
-      // Brand filter
-      filtered = filtered.filter((product) => {
-        const brandFilter = filters.brands.find((b) => b.name === product.brand);
-        return !brandFilter || brandFilter.checked;
-      });
-
-      // Price filter
+      // Фильтр по цене
       filtered = filtered.filter(
         (product) => product.priceValue >= filters.priceRange[0] && product.priceValue <= filters.priceRange[1],
       );
 
-      // Search filter
+      // Поиск
       if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
         filtered = filtered.filter(
           (product) =>
-            product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.brand.toLowerCase().includes(searchQuery.toLowerCase()),
+            product.name.toLowerCase().includes(query) ||
+            product.brand.toLowerCase().includes(query) ||
+            product.category.toLowerCase().includes(query),
         );
       }
 
-      // Sort by price if selected
+      // Сортировка
       if (sortOrder === 'asc') {
-        filtered = filtered.sort((a, b) => a.priceValue - b.priceValue);
+        filtered.sort((a, b) => a.priceValue - b.priceValue);
       } else if (sortOrder === 'desc') {
-        filtered = filtered.sort((a, b) => b.priceValue - a.priceValue);
+        filtered.sort((a, b) => b.priceValue - a.priceValue);
       }
 
       return filtered;
     };
 
     setFilteredProducts(applyFilters());
-  }, [filters, searchQuery, sortOrder, allProducts]);
+  }, [filters, searchQuery, sortOrder, allProducts, categoryProducts]);
 
-  // const handleSearch = (query: string) => {
-  //   setSearchQuery(query);
-  // };
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+  };
+
+  const toggleSortOrder = () => {
+    setSortOrder((prev) => {
+      if (prev === 'default') return 'asc';
+      if (prev === 'asc') return 'desc';
+      return 'default';
+    });
+  };
+
+  const resetAllFilters = () => {
+    resetFilters();
+    setSearchQuery('');
+    setSortOrder('default');
+  };
+
+  // Рендер секции товаров
+  const renderProductsSection = (title: string, products: Product[]) => {
+    if (products.length === 0) return null;
+
+    return (
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">{title}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <div key={product.id} className="flex justify-center">
+              <NewProductCard 
+                product={product} 
+                className="w-full hover:shadow-lg transition-shadow duration-200"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  };
+
+  // Сообщение о пустой категории
+  const renderEmptyCategoryMessage = () => {
+    return (
+      <div className="py-12 text-center bg-gray-50 rounded-lg">
+        <div className="flex justify-center mb-4">
+          <Frown size={48} className="text-gray-400" />
+        </div>
+        <h3 className="text-xl font-medium text-gray-600 mb-2">
+          В этой категории пока нет товаров
+        </h3>
+        <p className="text-gray-500 mb-6">
+          Попробуйте выбрать другую категорию или изменить параметры фильтров
+        </p>
+        <button
+          onClick={resetAllFilters}
+          className="px-6 py-2 bg-blue text-white rounded-lg hover:bg-blue transition-colors"
+        >
+          Сбросить фильтры
+        </button>
+      </div>
+    );
+  };
 
   return (
-    <SectionWrapper title="Каталог">
-      {/* <SearchBar onSearch={handleSearch} products={allProducts} /> */}
-<nav className="flex items-center text-sm text-gray-500 mb-8">
-        <Link to="/" className="hover:text-blue-600 transition-colors">
+    <SectionWrapper title="Каталог" className="px-4 lg:px-8">
+      {/* Хлебные крошки */}
+      <nav className="flex items-center text-sm text-gray-500 mb-8">
+        <Link to="/" className="hover:text-blue transition-colors">
           Главная
         </Link>
         <ChevronRight className="w-4 h-4 mx-2 text-gray-400" />
         <span className="text-gray-700 font-medium">Каталог</span>
       </nav>
-      <div className="flex justify-between items-center">
-        <div>
-          <button className="flex items-center font-semibold gap-[8px]" onClick={() => setShowFilter(!showFilter)}>
-       
-              <SlidersHorizontal color="#003153" />
-         
+
+      {/* Панель управления */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <button
+            className="flex items-center font-semibold gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            onClick={() => setShowFilter(!showFilter)}
+          >
+            <SlidersHorizontal size={18} color="#003153" />
             Фильтры
           </button>
-        </div>
-        <div className="flex items-center gap-[20px]">
-          {filters.categories.map((category, index) => (
-            <div key={index}>
+
+          <div className="relative flex-grow md:flex-grow-0 md:w-64">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              placeholder="Поиск товаров..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent"
+            />
+            {searchQuery && (
               <button
-                onClick={() => setActiveCategory(category)}
-                className={cn(
-                  `${category === filters.activeCategory ? 'bg-blue text-white' : ' bg-skyblue text-blue'} text-blue font-semibold lg:flex hidden gap-[10px] p-[8px] rounded-[8px]`,
-                )}
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                {category}
+                <X size={18} />
               </button>
-            </div>
-          ))}
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <button
+            onClick={toggleSortOrder}
+            className="px-4 py-2 bg-gray-100 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-200 transition-colors"
+          >
+            {sortOrder === 'asc' && 'По возрастанию цены'}
+            {sortOrder === 'desc' && 'По убыванию цены'}
+            {sortOrder === 'default' && 'Сортировка'}
+          </button>
+
+          {(filters.activeCategory ||
+            searchQuery ||
+            sortOrder !== 'default' ||
+            filters.brands.some((b) => !b.checked)) && (
+            <button 
+              onClick={resetAllFilters}
+              className="px-4 py-2 text-blue font-medium hover:bg-skyblue rounded-lg transition-colors"
+            >
+              Сбросить все
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row w-full gap-4 lg:gap-8 mt-2">
-        {/* Filter sidebar */}
+      {/* Категории */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {filters.categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => setActiveCategory(category)}
+            className={cn(
+              'px-4 py-2 rounded-lg font-medium transition-colors',
+              category === filters.activeCategory
+                ? 'bg-blue text-white hover:bg-blue'
+                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+            )}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
+      {/* Основное содержимое */}
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Фильтры */}
         {showFilter && (
-          <div className='absolute z-50'>
+          <div className="lg:sticky lg:top-4 lg:self-start lg:z-0 z-50">
             <FilterSideBar
               filters={filters}
               toggleBrandFilter={toggleBrandFilter}
               setPriceRange={setPriceRange}
               resetFilters={resetFilters}
-              getFilteredPrice={getFilteredPrice}
-              toggleShowFilter={setShowFilter}
+              toggleShowFilter={() => setShowFilter(false)}
             />
           </div>
         )}
 
-        {/* Product grid */}
+        {/* Товары */}
         <div className="flex-1">
           {isLoading ? (
             <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-4"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue"></div>
             </div>
           ) : (
-            <>
+            <div className="space-y-12">
               {/* Популярные товары */}
-              {popularProducts.length > 0 && (
-                <RecommendedProducts title="Популярные товары" products={popularProducts} />
-              )}
+              {!filters.activeCategory && !searchQuery && renderProductsSection('Популярные товары', popularProducts)}
 
               {/* Товары категории */}
-              {filters.activeCategory && categoryProducts.length > 0 && (
-                <RecommendedProducts
-                  title={`Популярные ${filters.activeCategory}`}
-                  products={categoryProducts.slice(0, 4)}
-                />
+              {filters.activeCategory && !searchQuery && (
+                categoryProducts.length > 0 ? (
+                  renderProductsSection(filters.activeCategory, categoryProducts)
+                ) : (
+                  renderEmptyCategoryMessage()
+                )
               )}
 
-              {/* Отфильтрованные товары */}
-              <div className="flex-1">
-                <AnimatePresence>
-                  {filteredProducts.length > 0 && (
-                    <RecommendedProducts title="Отфильтрованные товары" products={filteredProducts} />
-                  )}
-                </AnimatePresence>
-              </div>
+              {/* Результаты поиска */}
+              {filteredProducts.length > 0 && renderProductsSection('Результаты поиска', filteredProducts)}
 
               {/* Новые поступления */}
-              {newProducts.length > 0 && <RecommendedProducts title="Новые поступления" products={newProducts} />}
+              {!filters.activeCategory && !searchQuery && renderProductsSection('Новые поступления', newProducts)}
 
-              {filteredProducts.length === 0 && !isLoading && (
-                <motion.div
-                  className="py-8 text-center text-gray-500"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <p className="text-lg">Товары не найдены. Пожалуйста, измените параметры поиска.</p>
-                  <Button className="mt-4 bg-blue text-white" onClick={resetFilters}>
-                    Сбросить все фильтры
-                  </Button>
-                </motion.div>
+              {/* Сообщение, если ничего не найдено */}
+              {filteredProducts.length === 0 && searchQuery && (
+                <div className="py-12 text-center bg-gray-50 rounded-lg">
+                  <div className="flex justify-center mb-4">
+                    <Frown size={48} className="text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-medium text-gray-600 mb-2">
+                    По вашему запросу ничего не найдено
+                  </h3>
+                  <p className="text-gray-500 mb-6">
+                    Попробуйте изменить параметры поиска или сбросить фильтры
+                  </p>
+                  <button
+                    onClick={resetAllFilters}
+                    className="px-6 py-2 bg-blue text-white rounded-lg  transition-colors"
+                  >
+                    Сбросить фильтры
+                  </button>
+                </div>
               )}
-            </>
+            </div>
           )}
         </div>
       </div>
-
-      {/* Pagination */}
-      {/* <Pagination filteredProducts={filteredProducts} /> */}
-
-      {/* Рекомендуемые товары в конце страницы */}
-      {filteredProducts.length > 0 && !isLoading && allProducts.length > 10 && (
-        <RecommendedProducts title="Вам также может понравиться" products={allProducts.slice(10, 16)} />
-      )}
     </SectionWrapper>
   );
 };
