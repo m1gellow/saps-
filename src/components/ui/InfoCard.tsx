@@ -10,37 +10,43 @@ interface InfoCardProps {
   img?: string;
   description?: string;
   badgeDate?: string;
+  button?: boolean;
 }
 
-export const InfoCard = ({ size = 'normal', title, img, description, badgeDate }: InfoCardProps) => {
+export const InfoCard = ({ size = 'normal', button, title, img, description, badgeDate }: InfoCardProps) => {
   const backgroundImage = size === 'small' ? cardBgSm : cardBgBg;
-  
+
   return (
     <div
       className={cn(
         'relative bg-skyblue rounded-xl overflow-hidden',
         'flex flex-col',
         size === 'small' ? 'min-h-[260px]' : 'min-h-[400px]',
-        'md:flex-row md:h-full'
+        {
+          'md:flex-row md:h-full': img, // Горизонтальное расположение только если есть изображение
+        }
       )}
       style={{
         backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat"
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* Текстовый контент */}
+      {/* Текстовый контент - теперь может занимать всю ширину */}
       <div
         className={cn(
           'relative z-10 p-5 md:p-8 flex flex-col justify-between',
-          'md:w-1/2',
+          {
+            'md:w-1/2': img, // Половина ширины только если есть изображение
+            'w-full': !img, // Полная ширина если нет изображения
+          },
           size === 'small' ? 'md:min-h-[260px]' : 'md:min-h-[560px]'
         )}
       >
-        <div className='flex flex-col gap-[20px]'>
+        <div className="flex flex-col gap-[20px]">
           {badgeDate && (
-            <button className="bg-blue font-bold text-white w-max gap-[10px] p-[5px] rounded-[8px]">
+            <button className="bg-blue font-bold text-white w-max gap-[10px] p-[5px] rounded-[4px]">
               {badgeDate}
             </button>
           )}
@@ -49,23 +55,28 @@ export const InfoCard = ({ size = 'normal', title, img, description, badgeDate }
             {title}
           </h1>
           {description && (
-            <p className="font-medium text-gray-800 text-base sm:text-lg md:text-xl">
+            <p className="font-medium text-gray-800 text-[20px] sm:text-lg md:text-xl">
               {description}
             </p>
+          )}
+          {button && (
+            <button className="bg-blue text-white text-[16px] font-bold px-[79.5px] py-[13px] rounded-full">
+              Подписаться
+            </button>
           )}
         </div>
       </div>
 
-      {/* Изображение - переработанный блок */}
-      <div
-        className={cn(
-          'relative flex-1',
-          'min-h-[200px] md:min-h-0',
-          'flex items-center justify-center',
-          'bg-gray-100 bg-opacity-50' // Добавим прозрачность чтобы фон был виден
-        )}
-      >
-        {img && (
+      {/* Блок изображения - рендерим только если есть img */}
+      {img && (
+        <div
+          className={cn(
+            'relative flex-1',
+            'min-h-[200px] md:min-h-0',
+            'flex items-center justify-center',
+            'bg-gray-100 bg-opacity-50'
+          )}
+        >
           <img
             src={img}
             alt={title}
@@ -76,8 +87,8 @@ export const InfoCard = ({ size = 'normal', title, img, description, badgeDate }
               size === 'small' ? 'md:object-left' : 'md:object-center'
             )}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
