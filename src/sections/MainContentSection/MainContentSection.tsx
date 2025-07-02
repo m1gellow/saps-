@@ -15,7 +15,7 @@ export const MainContentSection = () => {
         img={'/items/Sup.png'}
       />
       <div className="flex flex-col gap-5 sm:gap-6 md:gap-8">
-        <InfoCard size="small" title="Закажи SUP с доставкой"  img={'/items/Sup2.png'} />
+        <InfoCard size="small" title="Закажи SUP с доставкой" img={'/items/Sup2.png'} />
         <InfoCard size="small" title="Уже есть SUP? Не забудьте про комплектующие!" img={'/items/jacket.png'} />
       </div>
     </SectionWrapper>

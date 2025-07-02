@@ -13,7 +13,7 @@ interface InfoCardProps {
   button?: boolean;
 }
 
-export const InfoCard = ({ size = 'normal', button, title, img, description, badgeDate }: InfoCardProps) => {
+export const InfoCard = ({ size = 'normal', button, title, img, description, badgeDate, benefits }: InfoCardProps) => {
   const backgroundImage = size === 'small' ? cardBgSm : cardBgBg;
 
   return (
